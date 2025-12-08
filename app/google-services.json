@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "185523513182",
+    "firebase_url": "https://chatapplication-563d0-default-rtdb.firebaseio.com",
+    "project_id": "chatapplication-563d0",
+    "storage_bucket": "chatapplication-563d0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185523513182:android:af9b9347e48880e7cdd1cf",
+        "android_client_info": {
+          "package_name": "com.ayub.khosa.chatapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHRgWAVihMX6ew9-71NikphKY2tjc9Hvs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
