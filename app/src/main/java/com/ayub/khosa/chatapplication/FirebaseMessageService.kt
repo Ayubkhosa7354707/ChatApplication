@@ -1,60 +1,64 @@
 package com.ayub.khosa.chatapplication
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
-import androidx.core.app.NotificationCompat
+import androidx.annotation.RequiresApi
+import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-
 class FirebaseMessageService : FirebaseMessagingService() {
 
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        PrintLogs.printInfo("Refreshed token: " + token)
+
+    companion object {
+        private const val REPLY_ACTION_ID = "REPLY_ACTION_ID"
+        private const val KEY_REPLY_TEXT = "KEY_REPLY_TEXT"
+
+
+        var sharedPref: SharedPreferences? = null
+
+        var token: String?
+            get() {
+                return sharedPref?.getString(Constant.KEY_FCM_TOKEN, "")
+            }
+            set(value) {
+                sharedPref?.edit()?.putString(Constant.KEY_FCM_TOKEN, value)?.apply()
+            }
     }
 
-    override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
-        PrintLogs.printInfo("RemoteMessage  title -->  " + message.notification?.title)
-        PrintLogs.printInfo("RemoteMessage  body -->  " + message.notification?.body)
+
+    override fun onNewToken(newToken: String) {
+        super.onNewToken(newToken)
+        PrintLogs.printInfo("Refreshed token: " + newToken)
+        token = newToken
+    }
 
 
-        //  val message = message.data[Constant.KEY_MESSAGE]?:""
+    @RequiresApi(Build.VERSION_CODES.S)
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
+
+        PrintLogs.printInfo(" messageId " + remoteMessage.messageId)
+
+        PrintLogs.printInfo("From: ${remoteMessage.from}")
+
+        // Check if message contains a data payload.
+        if (remoteMessage.data.isNotEmpty()) {
+            PrintLogs.printInfo("Message data payload: ${remoteMessage.data}")
 
 
-        val notificationManager =
-            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val notificationId = 1
-        val requestCode = 1
-
-        val channelId = "Firebase Messaging ID"
-        val channelName = "Firebase Messaging"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(
-                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
-            )
         }
 
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntentFlag =
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) 0 else PendingIntent.FLAG_IMMUTABLE
-        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, pendingIntentFlag)
+        PrintLogs.printInfo(" message contains a notification payload   title " + remoteMessage.notification?.title)
 
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle(message.notification?.title)
-            .setContentText(message.notification?.body)
-            .setSmallIcon(R.drawable.logo)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .build()
+        PrintLogs.printInfo(" message contains a notification payload   " + remoteMessage.notification?.body)
 
-        notificationManager.notify(notificationId, notification)
+
     }
 
-
 }
+
+
+
+

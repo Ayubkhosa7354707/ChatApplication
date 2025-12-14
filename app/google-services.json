@@ -13,7 +13,20 @@
           "package_name": "com.ayub.khosa.chatapplication"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "185523513182-b1t11qnfjgpt4cf2s59vsmqjovo4o915.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ayub.khosa.chatapplication",
+            "certificate_hash": "42a153d083bc15d8538b51058571e979d847d818"
+          }
+        },
+        {
+          "client_id": "185523513182-9b5ic50rkf15jh45l3hfpotbgcklum9a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDHRgWAVihMX6ew9-71NikphKY2tjc9Hvs"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185523513182-9b5ic50rkf15jh45l3hfpotbgcklum9a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

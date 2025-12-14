@@ -10,13 +10,8 @@ object Constant {
     const val KEY_USER_EMAIL = "email"
     const val KEY_USER_ID = "userId"
 
-    const val KEY_COLLECTION_CHAT = "chat"
 
-
-    const val KEY_SENDER_ID = "senderId"
-    const val KEY_RECEIVER_ID = "receiverId"
-    const val KEY_MESSAGE = "message"
-    const val KEY_TIMESTAMP = "timestamp"
+    const val FCM_BASE_URL = "https://chatapplication-563d0-default-rtdb.firebaseio.com/"
 
 
 }

@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,8 +35,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ayub.khosa.chatapplication.R
+import com.ayub.khosa.chatapplication.feature.auth.signin.google.AuthenticationButton
+import com.ayub.khosa.chatapplication.feature.home.HomeScreen
 
 @Composable
 fun SignInScreen(navController: NavController) {
@@ -103,9 +107,10 @@ fun SignInScreen(navController: NavController) {
                     onClick = {
 
 
-                        // viewModel.signIn(email, password)
-                        viewModel.signIn("ayub.khosa@gmail.com", "ayub.khosa")
+//                         viewModel.signIn(email, password)
+                        //   viewModel.signIn("ayub.khosa@gmail.com", "ayub.khosa")
 
+                        viewModel.signIn("ayubkhosa7354707@gmail.com", "ayub.khosa")
                     },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Nothing || uiState.value == SignInState.Error)
@@ -116,6 +121,10 @@ fun SignInScreen(navController: NavController) {
                 TextButton(onClick = { navController.navigate("signup") }) {
                     Text(text = "Don't have an account? Sign Up")
                 }
+            }
+
+            AuthenticationButton(buttonText = "sign_in_with_google") { credential ->
+                viewModel.onSignInWithGoogle(credential)
             }
         }
     }

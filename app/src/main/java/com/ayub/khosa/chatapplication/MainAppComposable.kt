@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ayub.khosa.chatapplication.feature.auth.home.HomeScreen
 import com.ayub.khosa.chatapplication.feature.auth.signin.SignInScreen
 import com.ayub.khosa.chatapplication.feature.auth.signup.SignUpScreen
+import com.ayub.khosa.chatapplication.feature.home.HomeScreen
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -31,6 +31,8 @@ fun MainApp() {
             composable("home") {
                 HomeScreen(navController)
             }
+
+
         }
 
     }

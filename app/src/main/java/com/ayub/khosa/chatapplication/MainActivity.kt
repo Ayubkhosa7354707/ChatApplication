@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var pref: SharedPreferences
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
 //                }
 
                 MainApp()
+
             }
         }
 

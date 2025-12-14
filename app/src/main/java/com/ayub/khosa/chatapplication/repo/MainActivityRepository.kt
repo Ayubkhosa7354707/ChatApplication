@@ -1,15 +1,22 @@
 package com.ayub.khosa.chatapplication.repo
 
-import android.content.SharedPreferences
-import com.ayub.khosa.chatapplication.utils.Constant
-import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Context
+import android.credentials.CredentialManager
+import android.credentials.GetCredentialRequest
+import com.ayub.khosa.chatapplication.model.MessageBody
+import com.ayub.khosa.chatapplication.network.Api
+import com.ayub.khosa.chatapplication.utils.PrintLogs
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
 class MainActivityRepository @Inject constructor(
-    private val fireMessage: FirebaseMessaging, private val pref: SharedPreferences
+    private val fireMessage: FirebaseMessaging,
+    @ApplicationContext private val context: Context,
+    private val fcmApi: Api
 ) {
 
     suspend fun getfcmtoken(): String {
@@ -18,12 +25,15 @@ class MainActivityRepository @Inject constructor(
         return token
     }
 
-    suspend fun sendMessage(message: HashMap<String, Any>): Boolean = try {
-        val fireStore = FirebaseFirestore.getInstance()
-        fireStore.collection(Constant.KEY_COLLECTION_CHAT).document("test_chat").set(message).await()
-        true
-    } catch (e: Exception) {
-        false
+    suspend fun sendMessage(messageBody: MessageBody) {
+        PrintLogs.printInfo("MainActivityRepository sendMessage ")
+
+      //  val credentialManager = CredentialManager.create(context)
+
+
+        
+        //  return fcmApi.sendMessage(messageBody = messageBody, header = remoteHeader)
+
     }
 
 
