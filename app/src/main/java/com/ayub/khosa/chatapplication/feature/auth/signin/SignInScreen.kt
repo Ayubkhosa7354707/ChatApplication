@@ -108,9 +108,8 @@ fun SignInScreen(navController: NavController) {
 
 
 //                         viewModel.signIn(email, password)
-                        //   viewModel.signIn("ayub.khosa@gmail.com", "ayub.khosa")
 
-                        viewModel.signIn("ayubkhosa7354707@gmail.com", "ayub.khosa")
+                        viewModel.signIn("ayubkhosa@test.com", "test123")
                     },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Nothing || uiState.value == SignInState.Error)

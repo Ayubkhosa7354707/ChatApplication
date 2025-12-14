@@ -36,7 +36,7 @@ fun HomeScreen(navController: NavHostController ) {
 
 
 
-    LocalContext.current as MainActivity
+
     LaunchedEffect(Unit) {
         Firebase.auth.currentUser?.let {
 //            context.initZegoService(

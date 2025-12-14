@@ -7,9 +7,7 @@ import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ayub.khosa.chatapplication.feature.auth.signin.google.AccountService
-import com.ayub.khosa.chatapplication.model.Data
-import com.ayub.khosa.chatapplication.model.MessageBody
-import com.ayub.khosa.chatapplication.model.MyUSER
+import com.ayub.khosa.chatapplication.model.AuthUser
 import com.ayub.khosa.chatapplication.repo.MainActivityRepository
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
@@ -35,23 +33,23 @@ class HomeViewModel @Inject constructor(
     private val repository: MainActivityRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MyUSER())
-    val uiState: StateFlow<MyUSER> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AuthUser())
+    val uiState: StateFlow<AuthUser> = _uiState.asStateFlow()
     // Expose as StateFlow
 
 
     init {
 
         PrintLogs.printD(" HomeViewModel init ")
-        getmyUser()
+        getAuthUser()
     }
 
-    fun getmyUser() {
+    fun getAuthUser() {
         var firebaseuser: FirebaseUser? = Firebase.auth.currentUser
 
         _uiState.value.email = firebaseuser?.email as String
-        _uiState.value.userId = firebaseuser?.uid as String
-        _uiState.value.name = firebaseuser?.displayName as String
+        _uiState.value.id = firebaseuser?.uid as String
+        _uiState.value.displayName = firebaseuser?.displayName as String
         getfcmtoken()
     }
 
@@ -62,8 +60,8 @@ class HomeViewModel @Inject constructor(
             try {
                 token = repository.getfcmtoken()
                 pref.edit().putString(Constant.KEY_FCM_TOKEN, token).apply()
-                PrintLogs.printInfo(" FCM token  --> " + token)
-                _uiState.value.fcmToken = token
+                PrintLogs.printInfo("Home view model FCM token  --> " + token)
+//                _uiState.value..fcmToken = token
             } catch (e: Exception) {
                 PrintLogs.printD("Exception  " + e.message)
             }
@@ -75,7 +73,10 @@ class HomeViewModel @Inject constructor(
 
     fun logout() {
         PrintLogs.printInfo("HomeViewModel logout   ")
-        FirebaseAuth.getInstance().signOut()
+
+        Firebase.auth.signOut()
+
+
 
     }
 
@@ -87,26 +88,24 @@ class HomeViewModel @Inject constructor(
 
     fun saveSharedPreferences() {
 
-
-        pref.edit().putString(Constant.KEY_USER_ID, _uiState.value.userId).apply()
-        pref.edit().putString(Constant.KEY_USER_NAME, _uiState.value.name).apply()
+        pref.edit().putString(Constant.KEY_USER_ID, _uiState.value.id).apply()
+        pref.edit().putString(Constant.KEY_USER_NAME, _uiState.value.displayName).apply()
         pref.edit().putString(Constant.KEY_USER_EMAIL, _uiState.value.email).apply()
-        pref.edit().putString(Constant.KEY_FCM_TOKEN, _uiState.value.fcmToken).apply()
 
     }
 
     fun myRefsetValue() {
 
-        PrintLogs.printInfo("firebase database Write database  " + _uiState.value.fcmToken)
+        PrintLogs.printInfo("firebase database Write database  " )
 
-        databaseReference.child(Constant.KEY_USER_ID).setValue(_uiState.value.userId)
+        databaseReference.child(Constant.KEY_USER_ID).setValue(_uiState.value.id)
             .addOnSuccessListener {
                 PrintLogs.printInfo("User created successfully ")
             }.addOnFailureListener {
                 PrintLogs.printInfo("Failed to create user ")
             }
 
-        databaseReference.child(_uiState.value.userId).child(Constant.KEY_USER_EMAIL)
+        databaseReference.child(_uiState.value.id).child(Constant.KEY_USER_EMAIL)
             .setValue(_uiState.value.email)
             .addOnSuccessListener {
                 PrintLogs.printInfo("User email created successfully ")
@@ -114,21 +113,15 @@ class HomeViewModel @Inject constructor(
                 PrintLogs.printInfo("Failed to create user email")
             }
 
-        databaseReference.child(_uiState.value.userId).child(Constant.KEY_USER_NAME)
-            .setValue(_uiState.value.name)
+        databaseReference.child(_uiState.value.id).child(Constant.KEY_USER_NAME)
+            .setValue(_uiState.value.displayName)
             .addOnSuccessListener {
                 PrintLogs.printInfo("User name created successfully ")
             }.addOnFailureListener {
                 PrintLogs.printInfo("Failed to create user name")
             }
 
-        databaseReference.child(_uiState.value.userId).child(Constant.KEY_FCM_TOKEN)
-            .setValue(_uiState.value.fcmToken)
-            .addOnSuccessListener {
-                PrintLogs.printInfo("User token created successfully ")
-            }.addOnFailureListener {
-                PrintLogs.printInfo("Failed to create user token")
-            }
+
 
 
     }
@@ -153,12 +146,7 @@ class HomeViewModel @Inject constructor(
                 }.addOnFailureListener {
                     PrintLogs.printInfo("firebase Error getting data name")
                 }
-            databaseReference.child(it.value as String).child(Constant.KEY_FCM_TOKEN).get()
-                .addOnSuccessListener {
-                    PrintLogs.printInfo("firebase token Got value ${it.value}")
-                }.addOnFailureListener {
-                    PrintLogs.printInfo("firebase Error getting data name")
-                }
+
 
 
         }.addOnFailureListener {
@@ -177,11 +165,11 @@ class HomeViewModel @Inject constructor(
 
 
 
-        PrintLogs.printInfo("FirebaseFirestore  db  -> document " + _uiState.value.userId)
-        db.collection(Constant.KEY_COLLECTION_USERS).document(_uiState.value.userId).get()
+        PrintLogs.printInfo("FirebaseFirestore  db  -> document " + _uiState.value.id)
+        db.collection(Constant.KEY_COLLECTION_USERS).document(_uiState.value.id).get()
             .addOnSuccessListener { document ->
                 PrintLogs.printD("insert user with id: ${document.id}")
-                firestoreupdateUser(_uiState.value.copy(userId = document.id))
+                firestoreupdateUser(_uiState.value.copy(id = document.id))
 
             }
             .addOnFailureListener { e ->
@@ -191,17 +179,16 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    private fun firestoreupdateUser(myuser: MyUSER) {
+    private fun firestoreupdateUser(myuser: AuthUser) {
 
 
-        PrintLogs.printInfo(" firestoreupdateUser id --  " + myuser.userId)
-        PrintLogs.printInfo(" firestoreupdateUser fcmToken --  " + myuser.fcmToken)
+        PrintLogs.printInfo(" firestoreupdateUser id --  " + myuser.id)
         val db = FirebaseFirestore.getInstance()
         db.collection(Constant.KEY_COLLECTION_USERS)
-            .document(myuser.userId)
-            .set(myuser.toMyUser())
+            .document(myuser.id)
+            .set(myuser.toAuthUser())
             .addOnSuccessListener {
-                PrintLogs.printD("update user with id: ${myuser.userId}")
+                PrintLogs.printD("update user with id: ${myuser.id}")
 
             }
             .addOnFailureListener { e ->
@@ -213,26 +200,27 @@ class HomeViewModel @Inject constructor(
     }
 
     fun FirestoreReadValue() {
-        PrintLogs.printInfo(" FirestoreReadValue id-- " + _uiState.value.userId)
+        PrintLogs.printInfo(" FirestoreReadValue id-- " + _uiState.value.id)
 
         val db = FirebaseFirestore.getInstance()
 
         db.collection(Constant.KEY_COLLECTION_USERS)
             .get()
             .addOnSuccessListener { result ->
-                var myUSER: MyUSER? = null
+                var myUSER: AuthUser? = null
 
                 for (document in result) {
 
                     myUSER = document.data.toMyUSER()
-                    PrintLogs.printD("user Name:  " + myUSER?.name + " Email : " + myUSER?.email + " id : " + myUSER?.userId)
+                    PrintLogs.printInfo("FirestoreReadValue ->  "+document.data)
+                    PrintLogs.printD("user Name:  " + myUSER?.displayName + " Email : " + myUSER?.email + " id : " + myUSER?.id)
 
-                    myUSER?.userId = document.data.get(Constant.KEY_USER_ID) as String
-                    myUSER?.name = document.data.get(Constant.KEY_USER_NAME) as String
+                    myUSER?.id = document.data.get(Constant.KEY_USER_ID) as String
+                    myUSER?.displayName = document.data.get(Constant.KEY_USER_NAME) as String
                     myUSER?.email = document.data.get(Constant.KEY_USER_EMAIL) as String
-                    myUSER?.fcmToken = "" + document.data.get(Constant.KEY_FCM_TOKEN)
-                    PrintLogs.printD("user name found: " + myUSER?.name)
-                    PrintLogs.printD("user fcm found:  " + myUSER?.fcmToken)
+
+                    PrintLogs.printD("user id found: " + myUSER?.id)
+                    PrintLogs.printD("user name found: " + myUSER?.displayName)
                     PrintLogs.printD("user email found: " + myUSER?.email)
 
 
@@ -249,25 +237,24 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    private fun Map<String, Any>.toMyUSER(): MyUSER? {
+    private fun Map<String, Any>.toMyUSER(): AuthUser? {
 
 
-        return MyUSER(
-            userId = "" + this[Constant.KEY_USER_ID],
-            name = "" + this[Constant.KEY_USER_NAME],
+        return AuthUser(
+            id = "" + this[Constant.KEY_USER_ID],
+            displayName = "" + this[Constant.KEY_USER_NAME],
             email = "" + this[Constant.KEY_USER_EMAIL],
-            fcmToken = "" + this[Constant.KEY_FCM_TOKEN],
 
             )
     }
 
     fun SharedPreferencesReadValue() {
 
-        var myUSER: MyUSER = MyUSER(
+        var myUSER: AuthUser = AuthUser(
             pref.getString(Constant.KEY_USER_ID, "...") as String,
-            pref.getString(Constant.KEY_USER_NAME, "...") as String,
             pref.getString(Constant.KEY_USER_EMAIL, "...") as String,
-            pref.getString(Constant.KEY_FCM_TOKEN, "...") as String
+             "Home view model SharedPreferencesReadValue ",
+            pref.getString(Constant.KEY_USER_NAME, "...") as String
 
         )
 
@@ -279,32 +266,11 @@ class HomeViewModel @Inject constructor(
 
     fun sendMessage(message: String) {
 
-        PrintLogs.printD("sendMessage  ")
+        PrintLogs.printD("Home view model sendMessage  ")
         viewModelScope.launch {
             try {
 
-//                val messageMap = HashMap<String, Any>()
-//                messageMap[Constant.KEY_SENDER_ID] =
-//                    pref.getString(Constant.KEY_USER_ID, null).toString()
-//                messageMap[Constant.KEY_RECEIVER_ID] =
-//                    pref.getString(Constant.KEY_USER_ID, "...") as String
-//                messageMap[Constant.KEY_MESSAGE] = message
-//                messageMap[Constant.KEY_TIMESTAMP] = Date()
-//
-//                PrintLogs.printD("sendMessage messageMap   " + messageMap)
-
-                val messageBody = MessageBody(
-                    data = Data(
-                        userId = _uiState.value.userId,
-                        name = _uiState.value.name,
-                        fcmToken = _uiState.value.fcmToken,
-                        message = message
-                    ),
-                    regIs = listOf(_uiState.value.fcmToken)
-                )
-                PrintLogs.printInfo(" messageBody  " + messageBody.data.toString())
-
-                repository.sendMessage(messageBody)
+                repository.sendMessage(message)
 
 
             } catch (e: Exception) {
@@ -319,12 +285,12 @@ class HomeViewModel @Inject constructor(
 }
 
 
-private fun MyUSER.toMyUser(): MyUSER {
-    return MyUSER(
-        userId = this.userId as String,
-        name = this.name as String,
-        email = this.email as String,
-        fcmToken = this.fcmToken as String
+private fun AuthUser.toAuthUser(): AuthUser {
+    return AuthUser(
+        id = this.id as String,
+        displayName = this.displayName as String,
+        email = this.email as String
+
     )
 
 }

@@ -3,7 +3,6 @@ package com.ayub.khosa.chatapplication.repo
 import android.content.Context
 import android.credentials.CredentialManager
 import android.credentials.GetCredentialRequest
-import com.ayub.khosa.chatapplication.model.MessageBody
 import com.ayub.khosa.chatapplication.network.Api
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -25,7 +24,7 @@ class MainActivityRepository @Inject constructor(
         return token
     }
 
-    suspend fun sendMessage(messageBody: MessageBody) {
+    suspend fun sendMessage(messageBody: String) {
         PrintLogs.printInfo("MainActivityRepository sendMessage ")
 
       //  val credentialManager = CredentialManager.create(context)

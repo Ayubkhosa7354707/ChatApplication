@@ -1,5 +1,6 @@
 package com.ayub.khosa.chatapplication.feature.auth.signin.google
 
+import com.ayub.khosa.chatapplication.model.AuthUser
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -27,32 +28,30 @@ class AccountService  @Inject constructor() {
         }
 
 
-    val currentUserId: String
-        get() = Firebase.auth.currentUser?.uid.orEmpty()
-
-      fun hasUser(): Boolean {
-        return Firebase.auth.currentUser != null
-    }
-
-      fun getUserProfile(): AuthUser {
-        return Firebase.auth.currentUser.toAuthUser()
-    }
-
-      suspend fun createAnonymousAccount() {
-        Firebase.auth.signInAnonymously().await()
-    }
+//    val currentUserId: String
+//        get() = Firebase.auth.currentUser?.uid.orEmpty()
+//
+//      fun hasUser(): Boolean {
+//        return Firebase.auth.currentUser != null
+//    }
+//
+//      fun getUserProfile(): AuthUser {
+//        return Firebase.auth.currentUser.toAuthUser()
+//    }
 
 
 
-      suspend fun linkAccountWithGoogle(idToken: String) {
-        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-        Firebase.auth.currentUser!!.linkWithCredential(firebaseCredential).await()
-    }
 
-      suspend fun linkAccountWithEmail(email: String, password: String) {
-        val credential = EmailAuthProvider.getCredential(email, password)
-        Firebase.auth.currentUser!!.linkWithCredential(credential).await()
-    }
+
+//      suspend fun linkAccountWithGoogle(idToken: String) {
+//        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+//        Firebase.auth.currentUser!!.linkWithCredential(firebaseCredential).await()
+//    }
+
+//      suspend fun linkAccountWithEmail(email: String, password: String) {
+//        val credential = EmailAuthProvider.getCredential(email, password)
+//        Firebase.auth.currentUser!!.linkWithCredential(credential).await()
+//    }
 
       suspend fun signInWithGoogle(idToken: String) {
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
@@ -63,21 +62,17 @@ class AccountService  @Inject constructor() {
         Firebase.auth.signInWithEmailAndPassword(email, password).await()
     }
 
-      suspend fun signOut() {
-        Firebase.auth.signOut()
 
-        // Sign the user back in anonymously.
-        createAnonymousAccount()
-    }
 
 
 
     private fun FirebaseUser?.toAuthUser(): AuthUser {
-        return if (this == null) AuthUser() else AuthUser(id = this.uid,
+        return if (this == null) AuthUser() else AuthUser(
+            id = this.uid,
             email = this.email ?: "",
             provider = this.providerId,
             displayName = this.displayName ?: "",
             isAnonymous = this.isAnonymous
-            )
+        )
     }
 }
