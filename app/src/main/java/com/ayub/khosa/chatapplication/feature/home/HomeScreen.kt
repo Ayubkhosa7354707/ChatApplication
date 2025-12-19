@@ -19,12 +19,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import android.Manifest
 import kotlin.random.Random
 
 
-@SuppressLint("ContextCastToActivity")
+
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
 
@@ -32,6 +37,15 @@ fun HomeScreen(navController: NavHostController) {
 
 
 
+    val postNotificationPermission =
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+
+    LaunchedEffect(key1 = true) {
+        if (!postNotificationPermission.status.isGranted) {
+            postNotificationPermission.launchPermissionRequest()
+        }
+    }
 
 
 

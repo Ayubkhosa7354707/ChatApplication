@@ -1,6 +1,8 @@
 package com.ayub.khosa.chatapplication
 
+import android.content.Context
 import android.content.SharedPreferences
+import com.ayub.khosa.chatapplication.notification.NotificationHandler
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -48,12 +50,17 @@ class FirebaseMessageService : FirebaseMessagingService() {
 
         }
 
-        PrintLogs.printInfo(" message contains a notification payload   title " + remoteMessage.notification?.title)
+        PrintLogs.printInfo(" message contains a notification payload   " + remoteMessage.notification?.title)
 
         PrintLogs.printInfo(" message contains a notification payload   " + remoteMessage.notification?.body)
 
 
+        val notificationHandler = NotificationHandler(context = this)
+        notificationHandler.showSimpleNotification(remoteMessage.notification?.body,remoteMessage.notification?.body)
     }
+
+
+
 
 }
 
