@@ -10,6 +10,7 @@ object Constant {
     const val KEY_USER_EMAIL = "email"
     const val KEY_USER_ID = "id"
     const val KEY_googleIdToken = "googleIdToken"
+    const val KEY_notificationChannelID = "Notification from FCM Service"
 
     const val FCM_URL = "https://fcm.googleapis.com/v1/projects/chatapplication-563d0/messages:send"
 

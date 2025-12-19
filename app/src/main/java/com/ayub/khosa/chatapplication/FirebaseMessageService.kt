@@ -1,13 +1,16 @@
 package com.ayub.khosa.chatapplication
 
-import android.content.Context
+import android.app.NotificationChannel
 import android.content.SharedPreferences
-import com.ayub.khosa.chatapplication.notification.NotificationHandler
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+import android.app.NotificationManager
+import android.content.Context
+import androidx.core.app.NotificationCompat
+import kotlin.random.Random
 class FirebaseMessageService : FirebaseMessagingService() {
 
 
@@ -54,15 +57,35 @@ class FirebaseMessageService : FirebaseMessagingService() {
 
         PrintLogs.printInfo(" message contains a notification payload   " + remoteMessage.notification?.body)
 
+        remoteMessage.notification?.let {
+            PrintLogs.printInfo("Message Notification Body: ${it.body}")
+        }
 
-        val notificationHandler = NotificationHandler(context = this)
-        notificationHandler.showSimpleNotification(remoteMessage.notification?.body,remoteMessage.notification?.body)
+
+        sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
+
+
     }
 
+    private fun sendNotification(title: String?, body: String?) {
+
+        val notificationManager = this. getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
 
+        val notification = NotificationCompat.Builder(this, Constant.KEY_notificationChannelID)
+            .setContentTitle("Title :  "+title)
+            .setContentText("Message : " + body)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setAutoCancel(true)  // finalizes the creation
 
+        notificationManager.notify(Random.nextInt(), notification.build())
+
+        PrintLogs.printInfo(" notification sent ")
+    }
 }
+
+
 
 
 
