@@ -5,5 +5,5 @@ data class AuthUser(
     var email: String = "",
     val provider: String = "",
     var displayName: String = "",
-    val isAnonymous: Boolean = true
+//    val isAnonymous: Boolean = true
 )

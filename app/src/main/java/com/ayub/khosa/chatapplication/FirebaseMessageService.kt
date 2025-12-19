@@ -1,8 +1,6 @@
 package com.ayub.khosa.chatapplication
 
 import android.content.SharedPreferences
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -32,10 +30,10 @@ class FirebaseMessageService : FirebaseMessagingService() {
         super.onNewToken(newToken)
         PrintLogs.printInfo("Refreshed token: " + newToken)
         token = newToken
+        sharedPref?.edit()?.putString(Constant.KEY_FCM_TOKEN, newToken)?.apply()
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 

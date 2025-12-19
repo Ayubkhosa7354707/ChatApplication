@@ -13,25 +13,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.ayub.khosa.chatapplication.MainActivity
-import com.ayub.khosa.chatapplication.feature.auth.signin.google.AuthenticationButton
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlin.random.Random
 
+
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun HomeScreen(navController: NavHostController ) {
+fun HomeScreen(navController: NavHostController) {
 
     val viewModel = hiltViewModel<HomeViewModel>()
+
+
+
 
 
 
@@ -134,21 +134,32 @@ fun HomeScreen(navController: NavHostController ) {
                 Text(text = "SharedPreferences  Read")
             }
 
-            Button(
-                onClick = {
 
-                    val randomIntUntil = Random.nextInt(100)
-                    viewModel.sendMessage("hello World " + randomIntUntil)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "send Message")
+
+
+            SendMessageButton(buttonText = "Save Googleid Token Button") { credential ->
+                viewModel.savegoogleidtoken(credential)
             }
 
 
 
+            Button(
+                onClick = {
 
 
+                    val randomInttitle = Random.nextInt(100)
+                    val randomIntbody = Random.nextInt(100)
+
+                    viewModel.sendMessage(
+                        "title $randomInttitle",
+                        "body $randomIntbody"
+                    )
+
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Send message")
+            }
 
 
         }

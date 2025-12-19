@@ -3,7 +3,6 @@ package com.ayub.khosa.chatapplication.feature.auth.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ayub.khosa.chatapplication.feature.auth.signin.SignInState
 import com.ayub.khosa.chatapplication.feature.auth.signin.google.AccountService
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.auth.FirebaseAuth
@@ -14,14 +13,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor( private val accountService: AccountService) : ViewModel() {
+class SignUpViewModel @Inject constructor(private val accountService: AccountService) :
+    ViewModel() {
 
     private val _state = MutableStateFlow<SignUpState>(SignUpState.Nothing)
     val state = _state.asStateFlow()
 
     fun signUp(name: String, email: String, password: String) {
-
-
 
 
         _state.value = SignUpState.Loading
@@ -40,7 +38,8 @@ class SignUpViewModel @Inject constructor( private val accountService: AccountSe
                             viewModelScope.launch {
 
                                 try {
-                                    accountService.signInWithEmail(email, password)
+
+                                    signIn(email = email, password = password)
                                     _state.value = SignUpState.Success
                                 } catch (e: Exception) {
                                     _state.value = SignUpState.Error
@@ -60,6 +59,42 @@ class SignUpViewModel @Inject constructor( private val accountService: AccountSe
                     _state.value = SignUpState.Error
                 }
             }
+    }
+
+    private fun signIn(email: String, password: String) {
+        _state.value = SignUpState.Loading
+
+        viewModelScope.launch {
+
+            try {
+
+
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            PrintLogs.printInfo("  task.isSuccessful  ")
+                            task.result.user?.let {
+                                _state.value = SignUpState.Success
+
+                                PrintLogs.printInfo("  task.isSuccessful  " + task.result.user?.email)
+                                return@addOnCompleteListener
+                            }
+                            _state.value = SignUpState.Error
+
+                        } else {
+                            PrintLogs.printInfo("  task is failed  ")
+                            _state.value = SignUpState.Error
+                        }
+                    }
+
+
+            } catch (e: Exception) {
+                _state.value = SignUpState.Error
+                PrintLogs.printD(" Exception  " + e.message)
+            }
+        }
+
+
     }
 }
 

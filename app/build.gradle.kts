@@ -20,7 +20,8 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
- 
+        manifestPlaceholders["auth0Domain"] = "https://oauth2.googleapis.com/"
+        manifestPlaceholders["auth0Scheme"] = "https"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -47,6 +48,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            resources.excludes.add("META-INF/*")
+
         }
     }
 }
@@ -66,6 +69,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.googleid)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,11 +80,6 @@ dependencies {
 
     // material.icons.filled.Visibility
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    // dagger hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
 
 //    Navigation with Compose
     implementation("androidx.navigation:navigation-compose:2.9.6")
@@ -91,18 +90,17 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
 
 
-
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
 
     implementation("com.google.firebase:firebase-analytics")
 
-     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-messaging:24.0.0") // Check for the latest version
     implementation("com.google.firebase:firebase-database")
 
     // Declare the dependency for the Cloud Firestore library
-     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore")
     // dagger hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("androidx.room:room-compiler:2.6.1")
@@ -114,19 +112,22 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
 
 //    Inject ViewModel objects with Hilt
-
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-
+    implementation("com.squareup.okhttp3:okhttp:4.7.2")
 
     //Authentication with Credential Manager
     implementation("com.google.android.gms:play-services-auth:21.2.0")
-    implementation("androidx.credentials:credentials:1.2.2")
+    implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    implementation("com.auth0.android:auth0:2.5.1")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.8.0")
+
 
 }

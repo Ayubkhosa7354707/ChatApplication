@@ -9,9 +9,9 @@ object Constant {
     const val KEY_USER_NAME = "displayName"
     const val KEY_USER_EMAIL = "email"
     const val KEY_USER_ID = "id"
+    const val KEY_googleIdToken = "googleIdToken"
 
-
-    const val FCM_BASE_URL = "https://chatapplication-563d0-default-rtdb.firebaseio.com/"
+    const val FCM_URL = "https://fcm.googleapis.com/v1/projects/chatapplication-563d0/messages:send"
 
 
 }

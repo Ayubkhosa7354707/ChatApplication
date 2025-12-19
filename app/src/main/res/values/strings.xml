@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">ChatApplication</string>
-    <string name="firebase_server_key">AIzaSyDHRgWAVihMX6ew9-71NikphKY2tjc9Hvs</string>
+    <string name="firebase_server_key">b83aa7ab841164b775ddf95a8d16d85444fb2679</string>
     <string name="default_web_client_id">185523513182-9b5ic50rkf15jh45l3hfpotbgcklum9a.apps.googleusercontent.com</string>
-
 
 
 </resources>

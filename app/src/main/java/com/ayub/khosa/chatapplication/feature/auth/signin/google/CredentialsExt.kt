@@ -1,9 +1,6 @@
 package com.ayub.khosa.chatapplication.feature.auth.signin.google
 
 
-
-
-
 import android.content.Context
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -76,9 +73,9 @@ private suspend fun launchCredManButtonUI(
 
 
     } catch (e: NoCredentialException) {
-        PrintLogs.printE("launchCredManButtonUI NoCredentialException "+e.message)
+        PrintLogs.printE("launchCredManButtonUI NoCredentialException " + e.message)
     } catch (e: GetCredentialException) {
-        PrintLogs.printE("launchCredManButtonUI GetCredentialException "+e.message)
+        PrintLogs.printE("launchCredManButtonUI GetCredentialException " + e.message)
     }
 }
 
@@ -104,7 +101,7 @@ suspend fun launchCredManBottomSheet(
 
         onRequestResult(result.credential)
     } catch (e: NoCredentialException) {
-        PrintLogs.printE("launchCredManBottomSheet NoCredentialException "+e.message)
+        PrintLogs.printE("launchCredManBottomSheet NoCredentialException " + e.message)
 
         //If the bottom sheet was launched with filter by authorized accounts, we launch it again
         //without filter so the user can see all available accounts, not only the ones that have
@@ -113,6 +110,6 @@ suspend fun launchCredManBottomSheet(
             launchCredManBottomSheet(context, hasFilter = false, onRequestResult)
         }
     } catch (e: GetCredentialException) {
-        PrintLogs.printE("launchCredManBottomSheet GetCredentialException "+e.message)
+        PrintLogs.printE("launchCredManBottomSheet GetCredentialException " + e.message)
     }
 }
