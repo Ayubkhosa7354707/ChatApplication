@@ -1,41 +1,20 @@
 package com.ayub.khosa.chatapplication
 
-import android.app.NotificationChannel
-import android.content.SharedPreferences
+
+import android.app.NotificationManager
+import androidx.core.app.NotificationCompat
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-
-import android.app.NotificationManager
-import android.content.Context
-import androidx.core.app.NotificationCompat
 import kotlin.random.Random
+
 class FirebaseMessageService : FirebaseMessagingService() {
-
-
-    companion object {
-        private const val REPLY_ACTION_ID = "REPLY_ACTION_ID"
-        private const val KEY_REPLY_TEXT = "KEY_REPLY_TEXT"
-
-
-        var sharedPref: SharedPreferences? = null
-
-        var token: String?
-            get() {
-                return sharedPref?.getString(Constant.KEY_FCM_TOKEN, "")
-            }
-            set(value) {
-                sharedPref?.edit()?.putString(Constant.KEY_FCM_TOKEN, value)?.apply()
-            }
-    }
 
 
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
         PrintLogs.printInfo("Refreshed token: " + newToken)
-        token = newToken
-        sharedPref?.edit()?.putString(Constant.KEY_FCM_TOKEN, newToken)?.apply()
     }
 
 
@@ -69,11 +48,11 @@ class FirebaseMessageService : FirebaseMessagingService() {
 
     private fun sendNotification(title: String?, body: String?) {
 
-        val notificationManager = this. getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
 
         val notification = NotificationCompat.Builder(this, Constant.KEY_notificationChannelID)
-            .setContentTitle("Title :  "+title)
+            .setContentTitle("Title :  " + title)
             .setContentText("Message : " + body)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
@@ -82,6 +61,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
         notificationManager.notify(Random.nextInt(), notification.build())
 
         PrintLogs.printInfo(" notification sent ")
+
     }
 }
 

@@ -3,7 +3,6 @@ package com.ayub.khosa.chatapplication.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.ayub.khosa.chatapplication.feature.auth.signin.google.AccountService
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
@@ -27,11 +26,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseMessagingInstance(): FirebaseMessaging = FirebaseMessaging.getInstance()
-
-
-    @Provides
-    @Singleton
-    fun provideAccountService() = AccountService()
 
 
 }

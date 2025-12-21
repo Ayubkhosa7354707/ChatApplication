@@ -1,6 +1,7 @@
 package com.ayub.khosa.chatapplication.utils
 
 import android.util.Log
+import com.google.firebase.database.DatabaseException
 
 
 object PrintLogs {
@@ -10,7 +11,7 @@ object PrintLogs {
         if (logs_enable) Log.i(TAG, "" + message)
     }
 
-    fun printInfo(tag: String, message: String) {
+    fun printInfo(tag: String, message: DatabaseException) {
         if (logs_enable) Log.i("" + tag, "" + message)
     }
 

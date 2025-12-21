@@ -1,14 +1,19 @@
 package com.ayub.khosa.chatapplication.feature.auth.signin
 
 
+import android.annotation.SuppressLint
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ayub.khosa.chatapplication.feature.auth.signin.google.AccountService
+import com.ayub.khosa.chatapplication.model.AuthUser
+import com.ayub.khosa.chatapplication.repo.MainActivityRepository
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,11 +22,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor(private val accountService: AccountService) :
+class SignInViewModel @Inject constructor(private val repository: MainActivityRepository) :
     ViewModel() {
 
     private val _state = MutableStateFlow<SignInState>(SignInState.Nothing)
     val state = _state.asStateFlow()
+
+
+
+
+
+    init {
+        PrintLogs.printD(" SignInViewModel init ")
+        _state.value = SignInState.Nothing
+    }
 
     fun signIn(email: String, password: String) {
         _state.value = SignInState.Loading
@@ -39,6 +53,10 @@ class SignInViewModel @Inject constructor(private val accountService: AccountSer
                                 _state.value = SignInState.Success
 
                                 PrintLogs.printInfo("  task.isSuccessful  " + task.result.user?.email)
+
+
+
+
                                 return@addOnCompleteListener
                             }
                             _state.value = SignInState.Error
@@ -64,6 +82,7 @@ class SignInViewModel @Inject constructor(private val accountService: AccountSer
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     fun onSignInWithGoogle(credential: Credential) {
 
         _state.value = SignInState.Loading
@@ -71,8 +90,11 @@ class SignInViewModel @Inject constructor(private val accountService: AccountSer
             if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
 
-                accountService.signInWithGoogle(googleIdTokenCredential.idToken)
+
+              val authResult: AuthResult? =  repository.signInWithGoogle(googleIdTokenCredential.idToken)
                 PrintLogs.printInfo(" googleIdToken :" + googleIdTokenCredential.idToken)
+
+
 
 
                 PrintLogs.printInfo("Go to home screen")

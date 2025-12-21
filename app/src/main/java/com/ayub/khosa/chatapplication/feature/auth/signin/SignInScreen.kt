@@ -112,7 +112,7 @@ fun SignInScreen(navController: NavController) {
                         viewModel.signIn("ayubkhosa@test.com", "test123")
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = email.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Error || uiState.value == SignInState.Nothing)
+                    enabled = email.isNotEmpty() && password.isNotEmpty() && password.length >= 6
                 ) {
                     Text(text = "Sign In")
                 }

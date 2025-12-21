@@ -1,44 +1,77 @@
 package com.ayub.khosa.chatapplication.feature.home
 
-import android.annotation.SuppressLint
+import android.Manifest
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.google.accompanist.permissions.isGranted
+import androidx.navigation.compose.rememberNavController
+import com.ayub.khosa.chatapplication.feature.chat.CustomChatDialog
+import com.ayub.khosa.chatapplication.feature.rtdb.RTDBViewModel
+import com.ayub.khosa.chatapplication.model.AuthUser
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import android.Manifest
-import kotlin.random.Random
-
 
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController) {
 
-    val viewModel = hiltViewModel<HomeViewModel>()
+    val homeViewModel = hiltViewModel<HomeViewModel>()
+
+
+    val viewModelrtdb = hiltViewModel<RTDBViewModel>()
+
+
+    var mydatalist = rememberMutableStateListOf<AuthUser>()
+
+    if (mydatalist.isEmpty()) {
+        viewModelrtdb.RTDB_Read_All()
+        viewModelrtdb.getusersItems().forEach { authuser ->
+            LaunchedEffect(Unit) {
+                mydatalist.add(authuser)
+            }
+        }
+    }
+
+    var show_stripe = rememberSaveable { mutableStateOf(false) }
+    var reciver_authUser = AuthUser()
 
 
 
     val postNotificationPermission =
         rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+
 
 
     LaunchedEffect(key1 = true) {
@@ -78,111 +111,126 @@ fun HomeScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Welcome :  " + viewModel.uiState.collectAsState().value.email)
+            Text(text = " Welcome to Home Screen " )
+            Text(text = "Email :" + homeViewModel.uiState.collectAsState().value.email)
+            Text(text = "Id :" + homeViewModel.uiState.collectAsState().value.id)
+            Text(text = "Name :" + homeViewModel.uiState.collectAsState().value.displayName)
+//            Text(text = "FCM token :" + homeViewModel.uiState.collectAsState().value.fcmToken)
 
+
+            viewModelrtdb.RTDB_Write(homeViewModel.uiState.collectAsState().value)
 
             Button(
                 onClick = {
-                    viewModel.logout()
+                    homeViewModel.logout()
                     navController.popBackStack()
                     navController.navigate("login") {
                         popUpTo("login") { inclusive = true }
                     }
-
                 },
-                modifier = Modifier.fillMaxWidth(),
+                shape = RectangleShape,
+                modifier = Modifier.wrapContentSize(),
             ) {
                 Text(text = "Sign Out")
             }
 
+
+
+
+
+
+
+
             Button(
                 onClick = {
 
+                    if (mydatalist.isEmpty()) {
+                        viewModelrtdb.getusersItems().forEach { authuser ->
+                               mydatalist.add(authuser)
 
-                    viewModel.myRefsetValue()
-                },
-                modifier = Modifier.fillMaxWidth()
+                        }
+                    }
+
+
+
+                }, shape = RectangleShape,
+                modifier = Modifier.wrapContentSize(),
             ) {
-                Text(text = "Firebase.database Write")
+                Text(text = "Update list RTDB_Read_All ")
             }
-            Button(
-                onClick = {
-                    viewModel.myRefgetValue()
-                },
-                modifier = Modifier.fillMaxWidth()
+
+            Text(text = "List of Users ")
+            LazyColumn(
+                modifier = Modifier.align(Alignment.Start)
             ) {
-                Text(text = "Firebase.database Read")
-            }
+                items(
+                    items = mydatalist,
+                    key = { authUser -> authUser.id }
 
-
-            Button(
-                onClick = {
-                    viewModel.FirestoreWriteValue()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Firestore Write")
-            }
-            Button(
-                onClick = {
-                    viewModel.FirestoreReadValue()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Firestore  Read")
-            }
-            Button(
-                onClick = {
-                    viewModel.getfcmtoken()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "get fcmtoken  ")
-            }
-            Button(
-                onClick = {
-                    viewModel.SharedPreferencesReadValue()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "SharedPreferences  Read")
-            }
+                ) { authUser ->
 
 
 
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                show_stripe.value=true
+                                reciver_authUser=authUser
 
-            SendMessageButton(buttonText = "Save Googleid Token Button") { credential ->
-                viewModel.savegoogleidtoken(credential)
-            }
-
-
-
-            Button(
-                onClick = {
-
-
-                    val randomInttitle = Random.nextInt(100)
-                    val randomIntbody = Random.nextInt(100)
-
-                    viewModel.sendMessage(
-                        "title $randomInttitle",
-                        "body $randomIntbody"
+                            }
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        text = "Name ->" +authUser.displayName+" "+authUser.email,
+                        color = Color.Blue, fontSize = 18.sp,
                     )
-
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Send message")
+                }
             }
+
+            if(show_stripe.value==true){
+                CustomChatDialog( reciver_authUser  ,onDismissRequest = { show_stripe.value = false })
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         }
     }
 }
 
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewHomeScreen() {
-//    HomeScreen(navController = rememberNavController())
-//}
+@Composable
+fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+    return rememberSaveable(saver = snapshotStateListSaver()) {
+        elements.toList().toMutableStateList()
+    }
+}
+
+private fun <T : Any> snapshotStateListSaver() = listSaver<SnapshotStateList<T>, T>(
+    save = { stateList -> stateList.toList() },
+    restore = { it.toMutableStateList() },
+)
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewHomeScreen() {
+    HomeScreen(navController = rememberNavController())
+}

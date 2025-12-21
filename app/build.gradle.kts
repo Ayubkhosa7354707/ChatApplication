@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.googleid)
     implementation(libs.volley)
+    implementation(libs.androidx.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -122,12 +123,15 @@ dependencies {
 
     //Authentication with Credential Manager
     implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation ("com.google.android.gms:play-services-gcm:17.0.0")
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     implementation("com.auth0.android:auth0:2.5.1")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.8.0")
+
+
 
 
 }

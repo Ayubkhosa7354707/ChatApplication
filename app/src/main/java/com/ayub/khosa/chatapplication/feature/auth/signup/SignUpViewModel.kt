@@ -3,7 +3,6 @@ package com.ayub.khosa.chatapplication.feature.auth.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ayub.khosa.chatapplication.feature.auth.signin.google.AccountService
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,11 +12,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(private val accountService: AccountService) :
+class SignUpViewModel @Inject constructor() :
     ViewModel() {
 
     private val _state = MutableStateFlow<SignUpState>(SignUpState.Nothing)
     val state = _state.asStateFlow()
+
+    init {
+        PrintLogs.printD(" SignUpViewModel init ")
+        _state.value = SignUpState.Nothing
+
+    }
 
     fun signUp(name: String, email: String, password: String) {
 
