@@ -47,13 +47,15 @@ import kotlin.random.Random
 fun CustomChatDialog(reciver_authUser: AuthUser, onDismissRequest: () -> Unit) {
     val chatViewModel = hiltViewModel<ChatViewModel>()
 
-    val viewModelrtdb = hiltViewModel<RTDBViewModel>()
+     val viewModelrtdb = hiltViewModel<RTDBViewModel>()
     val textValue by chatViewModel.textValue.collectAsState()
 
 
     var mydatalist = rememberMutableStateListOf<Message>()
 
     if (mydatalist.isEmpty()) {
+
+
         viewModelrtdb.RTDB_Read_Message(
             chatViewModel.uiState.collectAsState().value.id,
             reciver_authUser.id

@@ -47,6 +47,7 @@ class ChatViewModel @Inject constructor(
     }
 
 
+
     private val _uiState = MutableStateFlow(AuthUser())
     val uiState: StateFlow<AuthUser> = _uiState.asStateFlow()
     // Expose as StateFlow
@@ -55,6 +56,8 @@ class ChatViewModel @Inject constructor(
     init {
         PrintLogs.printD(" ChatViewModel init ")
         getAuthUser()
+
+
     }
 
     fun getAuthUser() {
@@ -68,7 +71,7 @@ class ChatViewModel @Inject constructor(
     fun sendMessage(reciver_authUser: AuthUser, title: String, body: String) {
 
 
-        val viewModelrtdb = RTDBViewModel()
+
         val message: Message =
             Message(Notification(title, body), Data(reciver_authUser.id, _uiState.value.id))
 
@@ -172,8 +175,8 @@ class ChatViewModel @Inject constructor(
                                 PrintLogs.printInfo(" response -> " + response.toString())
                                 if (response.isSuccessful) {
                                     PrintLogs.printInfo(" response.isSuccessful ")
-
-                                    viewModelrtdb.RTDB_Write_Message(message)
+                                    // Send message to the firbase RTDB
+                                    RTDBViewModel().RTDB_Write_Message(message)
                                     updateState("Sent")
                                 } else {
                                     PrintLogs.printInfo(" response.isSuccessful not ")
