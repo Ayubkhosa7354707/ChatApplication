@@ -145,7 +145,8 @@ class RTDBViewModel @Inject constructor(
                         messageSnapshot.child("data").child("date").value as String
                     )
                     val message = Message(notification, data)
-                    if ((senderid == data.senderID) && (reciverid == data.reciverID)) {
+                    if (((senderid == data.senderID) && (reciverid == data.reciverID))  ||
+                        ((reciverid == data.senderID) && (senderid == data.reciverID)))  {
                         messageList.add(message)
 
                         PrintLogs.printInfo("  firebaseDatabaseRead MessageList > " + message.toString())

@@ -75,8 +75,8 @@ fun CustomChatDialog(reciver_authUser: AuthUser, onDismissRequest: () -> Unit) {
 
         if (textValue == "Sent") {
             val context = LocalContext.current
+            chatViewModel.updateState("not")
             showToast(context, "Message Sent")
-//            onDismissRequest()
         }
         var input_message by remember { mutableStateOf("") }
         // Your custom content goes here
@@ -103,6 +103,7 @@ fun CustomChatDialog(reciver_authUser: AuthUser, onDismissRequest: () -> Unit) {
                             )
                             mydatalist.clear()
                             viewModelrtdb.getmessagesItems().forEach { message ->
+
                                 mydatalist.add(message)
 
                             }
@@ -170,6 +171,12 @@ fun CustomChatDialog(reciver_authUser: AuthUser, onDismissRequest: () -> Unit) {
 
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
+                                if(message.data.senderID == chatViewModel.uiState.collectAsState().value.id ){
+                                    Text(text = "Sender")
+                                }else{
+                                    Text(text = "Reciver")
+                                }
+
                                 Text(text = message.data.senderID, color = Color.Red)
                                 Text(text = message.notification.title, color = Color.Blue)
                                 Text(text = message.notification.body, color = Color.Blue)
