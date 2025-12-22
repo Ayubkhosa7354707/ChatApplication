@@ -1,0 +1,1 @@
+A Chat App is a native real-time messaging application that utilizes Firebase Database as its data storage solution. It is built using the Model-View-ViewModel (MVVM) architecture and makes use of Coroutines for managing background tasks and managing the flow of data.
