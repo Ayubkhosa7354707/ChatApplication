@@ -4,16 +4,12 @@ package com.ayub.khosa.chatapplication.feature.auth.signin
 import android.annotation.SuppressLint
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ayub.khosa.chatapplication.model.AuthUser
 import com.ayub.khosa.chatapplication.repo.MainActivityRepository
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,9 +23,6 @@ class SignInViewModel @Inject constructor(private val repository: MainActivityRe
 
     private val _state = MutableStateFlow<SignInState>(SignInState.Nothing)
     val state = _state.asStateFlow()
-
-
-
 
 
     init {
@@ -91,7 +84,7 @@ class SignInViewModel @Inject constructor(private val repository: MainActivityRe
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
 
 
-              val authResult: AuthResult? =  repository.signInWithGoogle(googleIdTokenCredential.idToken)
+                repository.signInWithGoogle(googleIdTokenCredential.idToken)
                 PrintLogs.printInfo(" googleIdToken :" + googleIdTokenCredential.idToken)
 
 

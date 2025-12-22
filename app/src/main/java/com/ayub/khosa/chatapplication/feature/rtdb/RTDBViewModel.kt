@@ -1,7 +1,11 @@
 package com.ayub.khosa.chatapplication.feature.rtdb
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import com.ayub.khosa.chatapplication.model.AuthUser
+import com.ayub.khosa.chatapplication.model.message.Data
+import com.ayub.khosa.chatapplication.model.message.Message
+import com.ayub.khosa.chatapplication.model.message.Notification
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.firebase.Firebase
@@ -13,6 +17,7 @@ import com.google.firebase.database.getValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
+
 class RTDBViewModel @Inject constructor(
 ) : ViewModel() {
 
@@ -22,18 +27,32 @@ class RTDBViewModel @Inject constructor(
     val databaseReference = firebaseDatabase.getReference(Constant.KEY_COLLECTION_USERS)
 
 
-    private var myproducts: ArrayList<AuthUser> = ArrayList<AuthUser>()
-    private var _tasks = MutableStateFlow(myproducts)
-    val tasks: ArrayList<AuthUser>
-        get() = _tasks.value
+    val databaseReference_messages = firebaseDatabase.getReference(Constant.KEY_COLLECTION_Messages)
 
+
+    private var myAuthusers: ArrayList<AuthUser> = ArrayList<AuthUser>()
+    private var _authuser_tasks = MutableStateFlow(myAuthusers)
+    val authUsers: ArrayList<AuthUser>
+        get() = _authuser_tasks.value
 
     fun getusersItems(): List<AuthUser> {
-        PrintLogs.printInfo(" getusersItems ---   "+tasks.size)
-        return tasks
+        PrintLogs.printInfo(" getusersItems ---   " + authUsers.size)
+        return authUsers
     }
 
-    fun RTDB_Write(authuser: AuthUser) {
+
+    private var myMessages: ArrayList<Message> = ArrayList<Message>()
+    private var _message_tasks = MutableStateFlow(myMessages)
+    val messages: ArrayList<Message>
+        get() = _message_tasks.value
+
+    fun getmessagesItems(): List<Message> {
+        PrintLogs.printInfo(" getmessagesItems ---   " + messages.size)
+        return messages
+    }
+
+
+    fun RTDB_Authuser_Write(authuser: AuthUser) {
 
         PrintLogs.printInfo("RTDB_Write  ")
 
@@ -49,7 +68,7 @@ class RTDBViewModel @Inject constructor(
 
     }
 
-    fun RTDB_Read(id: String): AuthUser? {
+    fun RTDB_AuthUser_Read(id: String): AuthUser? {
 
         var user: AuthUser? = AuthUser()
         PrintLogs.printInfo("firebase database Read database end")
@@ -70,10 +89,7 @@ class RTDBViewModel @Inject constructor(
         return user
     }
 
-    fun RTDB_Read_All() {
-
-
-
+    fun RTDB_Read_All_AuthUser() {
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
@@ -89,7 +105,7 @@ class RTDBViewModel @Inject constructor(
                         PrintLogs.printInfo("UserData  fcm token : ${user.fcmToken}")
                     }
                 }
-                _tasks.value = usersList
+                _authuser_tasks.value = usersList
 
                 // Process your list of messages (e.g., update a RecyclerView)
             }
@@ -99,13 +115,68 @@ class RTDBViewModel @Inject constructor(
             }
             // ... onCancelled implementation
         })
+    }
+
+    fun RTDB_Read_Message(senderid: String, reciverid: String) {
+
+        databaseReference_messages.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SuspiciousIndentation")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val messageList = kotlin.collections.ArrayList<Message>()
+
+                for (messageSnapshot in dataSnapshot.children) {
 
 
+                    //  PrintLogs.printInfo(" messageSnapshot  "+messageSnapshot.getValue())
 
 
+                    //   PrintLogs.printInfo(" messageSnapshot -> notification -> title -> "+messageSnapshot.child("notification").child("title").getValue())
 
+                    val notification = Notification(
+                        messageSnapshot.child("notification").child("title").value as String,
+                        messageSnapshot.child("notification").child("body").value as String
+                    )
+
+//                    PrintLogs.printInfo(" "+notification.title+" "+notification.body)
+
+                    val data = Data(
+                        messageSnapshot.child("data").child("reciverID").value as String,
+                        messageSnapshot.child("data").child("senderID").value as String,
+                        messageSnapshot.child("data").child("date").value as String
+                    )
+                    val message = Message(notification, data)
+                    if ((senderid == data.senderID) && (reciverid == data.reciverID)) {
+                        messageList.add(message)
+
+                        PrintLogs.printInfo("  firebaseDatabaseRead MessageList > " + message.toString())
+                    }
+
+
+                }
+
+                // Process your list of messages (e.g., update a RecyclerView)
+
+                _message_tasks.value = messageList
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+            // ... onCancelled implementation
+        })
 
     }
 
+
+    fun RTDB_Write_Message(message: Message) {
+        PrintLogs.printInfo("RTDB_Write_Message  ")
+        databaseReference_messages.child(message.data.Date)
+            .setValue(message)
+            .addOnSuccessListener {
+                PrintLogs.printInfo("User  created successfully ")
+            }.addOnFailureListener {
+                PrintLogs.printInfo("Failed to create User")
+            }
+    }
 
 }

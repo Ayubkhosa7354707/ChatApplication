@@ -2,49 +2,24 @@ package com.ayub.khosa.chatapplication.feature.home
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ayub.khosa.chatapplication.model.AuthUser
 import com.ayub.khosa.chatapplication.repo.MainActivityRepository
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.database
-import com.google.firebase.database.getValue
 import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONObject
-import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.io.InputStream
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 
 @HiltViewModel
@@ -58,28 +33,12 @@ class HomeViewModel @Inject constructor(
     // Expose as StateFlow
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     init {
         PrintLogs.printD(" HomeViewModel init ")
         getAuthUser()
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             Firebase.messaging.subscribeToTopic(Constant.KEY_Firebase_Topic).await()
         }
-
 
 
     }
@@ -93,29 +52,22 @@ class HomeViewModel @Inject constructor(
         getfcmtoken()
 
 
-
     }
 
 
     @SuppressLint("SuspiciousIndentation")
     fun getfcmtoken() {
         PrintLogs.printD("getfcmtoken  ")
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                    val token = repository.getfcmtoken()
-                    _uiState.value.fcmToken = token
-                    PrintLogs.printInfo("Home view model FCM token  --> " + token)
-                    var authUser = AuthUser()
-                    authUser.id = _uiState.value.id
-                    authUser.displayName = _uiState.value.displayName
-                    authUser.email = _uiState.value.email
-                    authUser.fcmToken = _uiState.value.fcmToken
-
-
-
-
-
-
+                val token = repository.getfcmtoken()
+                _uiState.value.fcmToken = token
+                PrintLogs.printInfo("Home view model FCM token  --> " + token)
+                var authUser = AuthUser()
+                authUser.id = _uiState.value.id
+                authUser.displayName = _uiState.value.displayName
+                authUser.email = _uiState.value.email
+                authUser.fcmToken = _uiState.value.fcmToken
 
 
             } catch (e: Exception) {
@@ -253,7 +205,6 @@ class HomeViewModel @Inject constructor(
 //        }
 //    }
 //
-
 
 
 }

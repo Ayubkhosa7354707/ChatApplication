@@ -2,10 +2,17 @@ package com.ayub.khosa.chatapplication.feature.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ayub.khosa.chatapplication.feature.rtdb.RTDBViewModel
 import com.ayub.khosa.chatapplication.model.AuthUser
+import com.ayub.khosa.chatapplication.model.message.Data
+import com.ayub.khosa.chatapplication.model.message.Message
+import com.ayub.khosa.chatapplication.model.message.Notification
 import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,13 +46,32 @@ class ChatViewModel @Inject constructor(
         PrintLogs.printD(" LoginViewModel updateState " + newValue)
     }
 
+
     private val _uiState = MutableStateFlow(AuthUser())
     val uiState: StateFlow<AuthUser> = _uiState.asStateFlow()
     // Expose as StateFlow
 
 
+    init {
+        PrintLogs.printD(" ChatViewModel init ")
+        getAuthUser()
+    }
+
+    fun getAuthUser() {
+        var firebaseuser: FirebaseUser? = Firebase.auth.currentUser
+        _uiState.value.email = firebaseuser?.email as String
+        _uiState.value.id = firebaseuser?.uid as String
+        _uiState.value.displayName = firebaseuser?.displayName as String
+    }
+
 
     fun sendMessage(reciver_authUser: AuthUser, title: String, body: String) {
+
+
+        val viewModelrtdb = RTDBViewModel()
+        val message: Message =
+            Message(Notification(title, body), Data(reciver_authUser.id, _uiState.value.id))
+
 
         updateState("Not")
         viewModelScope.launch {
@@ -56,8 +82,7 @@ class ChatViewModel @Inject constructor(
                     try {
 
 
-
-                        val jsonString =  "{\n" +
+                        val jsonString = "{\n" +
                                 "  \"type\": \"service_account\",\n" +
                                 "  \"project_id\": \"chatapplication-563d0\",\n" +
                                 "  \"private_key_id\": \"d89abdc5f2475b446c08cdfdd6aac40b9ad1fa13\",\n" +
@@ -112,14 +137,17 @@ class ChatViewModel @Inject constructor(
 
                         // Add user data
 
-                          dataObject.put("userId", _uiState.value.id)
+//                          dataObject.put("userId", _uiState.value.id)
+                        dataObject.put("sender_Id", _uiState.value.id)
 
+                        dataObject.put("reciver_Id", reciver_authUser.id)
                         // Construct message with notification and data
                         messageObject.put("notification", notificationObject)
-                          messageObject.put("data", dataObject)
+                        messageObject.put("data", dataObject)
                         messageObject.put("token", reciver_authUser.fcmToken)
                         jsonObject.put("message", messageObject)
                         PrintLogs.printInfo(" jsonObject ->  " + jsonObject.toString())
+
 
                         val JSON: MediaType? = "application/json; charset=utf-8".toMediaTypeOrNull()
 
@@ -145,6 +173,7 @@ class ChatViewModel @Inject constructor(
                                 if (response.isSuccessful) {
                                     PrintLogs.printInfo(" response.isSuccessful ")
 
+                                    viewModelrtdb.RTDB_Write_Message(message)
                                     updateState("Sent")
                                 } else {
                                     PrintLogs.printInfo(" response.isSuccessful not ")

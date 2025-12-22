@@ -55,7 +55,7 @@ fun HomeScreen(navController: NavHostController) {
     var mydatalist = rememberMutableStateListOf<AuthUser>()
 
     if (mydatalist.isEmpty()) {
-        viewModelrtdb.RTDB_Read_All()
+        viewModelrtdb.RTDB_Read_All_AuthUser()
         viewModelrtdb.getusersItems().forEach { authuser ->
             LaunchedEffect(Unit) {
                 mydatalist.add(authuser)
@@ -63,9 +63,8 @@ fun HomeScreen(navController: NavHostController) {
         }
     }
 
-    var show_stripe = rememberSaveable { mutableStateOf(false) }
+    var show_chat = rememberSaveable { mutableStateOf(false) }
     var reciver_authUser = AuthUser()
-
 
 
     val postNotificationPermission =
@@ -111,14 +110,14 @@ fun HomeScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = " Welcome to Home Screen " )
+            Text(text = " Welcome to Home Screen ")
             Text(text = "Email :" + homeViewModel.uiState.collectAsState().value.email)
             Text(text = "Id :" + homeViewModel.uiState.collectAsState().value.id)
             Text(text = "Name :" + homeViewModel.uiState.collectAsState().value.displayName)
 //            Text(text = "FCM token :" + homeViewModel.uiState.collectAsState().value.fcmToken)
 
 
-            viewModelrtdb.RTDB_Write(homeViewModel.uiState.collectAsState().value)
+            viewModelrtdb.RTDB_Authuser_Write(homeViewModel.uiState.collectAsState().value)
 
             Button(
                 onClick = {
@@ -143,17 +142,16 @@ fun HomeScreen(navController: NavHostController) {
 
             Button(
                 onClick = {
+                    viewModelrtdb.RTDB_Read_All_AuthUser()
+                    mydatalist.clear()
+                    viewModelrtdb.getusersItems().forEach { authuser ->
+                        mydatalist.add(authuser)
 
-                    if (mydatalist.isEmpty()) {
-                        viewModelrtdb.getusersItems().forEach { authuser ->
-                               mydatalist.add(authuser)
-
-                        }
                     }
 
 
-
-                }, shape = RectangleShape,
+                },
+                shape = RectangleShape,
                 modifier = Modifier.wrapContentSize(),
             ) {
                 Text(text = "Update list RTDB_Read_All ")
@@ -170,46 +168,24 @@ fun HomeScreen(navController: NavHostController) {
                 ) { authUser ->
 
 
-
                     Text(
                         modifier = Modifier
                             .clickable {
-                                show_stripe.value=true
-                                reciver_authUser=authUser
+                                show_chat.value = true
+                                reciver_authUser = authUser
 
                             }
                             .padding(10.dp)
                             .fillMaxWidth(),
-                        text = "Name ->" +authUser.displayName+" "+authUser.email,
+                        text = "Name ->" + authUser.displayName + " " + authUser.email,
                         color = Color.Blue, fontSize = 18.sp,
                     )
                 }
             }
 
-            if(show_stripe.value==true){
-                CustomChatDialog( reciver_authUser  ,onDismissRequest = { show_stripe.value = false })
+            if (show_chat.value == true) {
+                CustomChatDialog(reciver_authUser, onDismissRequest = { show_chat.value = false })
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         }

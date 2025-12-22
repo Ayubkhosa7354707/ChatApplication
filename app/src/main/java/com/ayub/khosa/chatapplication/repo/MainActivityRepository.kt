@@ -24,7 +24,7 @@ class MainActivityRepository @Inject constructor(
     suspend fun signInWithGoogle(idToken: String): AuthResult? {
 
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-       return  Firebase.auth.signInWithCredential(firebaseCredential).await()
+        return Firebase.auth.signInWithCredential(firebaseCredential).await()
     }
 
 }

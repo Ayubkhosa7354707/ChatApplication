@@ -37,7 +37,7 @@ fun RTDBScreen() {
                 randomInttitle = Random.nextInt(100)
                 authUser.fcmToken = "fcmToken " + randomInttitle
 
-                viewModel.RTDB_Write(authUser)
+                viewModel.RTDB_Authuser_Write(authUser)
             }, shape = RectangleShape,
             modifier = Modifier.wrapContentSize()
         ) {
@@ -46,7 +46,7 @@ fun RTDBScreen() {
         Button(
             onClick = {
 
-                viewModel.RTDB_Read(authUser.id)
+                viewModel.RTDB_AuthUser_Read(authUser.id)
             }, shape = RectangleShape,
             modifier = Modifier.wrapContentSize()
         ) {
@@ -54,7 +54,7 @@ fun RTDBScreen() {
         }
         Button(
             onClick = {
-                viewModel.RTDB_Read_All()
+                viewModel.RTDB_Read_All_AuthUser()
             }, shape = RectangleShape,
             modifier = Modifier.wrapContentSize()
         ) {

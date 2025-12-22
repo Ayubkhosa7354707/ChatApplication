@@ -3,6 +3,10 @@ package com.ayub.khosa.chatapplication.utils
 object Constant {
 
     val KEY_COLLECTION_USERS: String = "Users"
+
+    val KEY_COLLECTION_Messages: String = "Messages"
+
+
     const val KEY_PREFERENCE_NAME: String = "chatAppPreference"
 
     const val KEY_Firebase_Topic: String = "chat"
