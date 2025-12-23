@@ -163,10 +163,23 @@ fun CustomChatDialog(reciver_authUser: AuthUser, onDismissRequest: () -> Unit) {
                         Spacer(modifier = Modifier
                             .width(2.dp)
                             .height(2.dp))
+                        var sender_or_reciver ="any"
+                        if(message.data.senderID == chatViewModel.uiState.collectAsState().value.id ){
+                            sender_or_reciver="Sender"
+                        }else{
+                            sender_or_reciver="Reciver"
+                        }
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.LightGray),
+                            if (sender_or_reciver == "Sender"){
+                                  Modifier
+                                    .fillMaxSize()
+                                    .background(Color.LightGray)
+                            }else{
+                                 Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Cyan)
+                            }
+                            ,
                             contentAlignment = Alignment.Center // Aligns all children to the center
                         ) {
                             Column(
