@@ -103,6 +103,8 @@ dependencies {
 
     // Declare the dependency for the Cloud Firestore library
     implementation("com.google.firebase:firebase-firestore")
+    // Add the main storage library dependency
+    implementation("com.google.firebase:firebase-storage")
     // dagger hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("androidx.room:room-compiler:2.6.1")

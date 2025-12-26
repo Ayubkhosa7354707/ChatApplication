@@ -3,56 +3,56 @@ package com.ayub.khosa.chatapplication.viewmodel
 
 
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ayub.khosa.chatapplication.model.Resource
-import com.ayub.khosa.chatapplication.repository.AuthRepository
-import com.google.firebase.auth.FirebaseUser
+import com.ayub.khosa.chatapplication.utils.Response
+import com.ayub.khosa.chatapplication.domain.repository.AuthRepository
+import com.ayub.khosa.chatapplication.domain.usecase.authScreen.AuthUseCases
+import com.ayub.khosa.chatapplication.utils.PrintLogs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
-    val loginFlow: StateFlow<Resource<FirebaseUser>?> = _loginFlow
+    var isUserSignInState = mutableStateOf(false)
+        private set
 
-    private val _signupFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
-    val signupFlow: StateFlow<Resource<FirebaseUser>?> = _signupFlow
+    var toastMessage = mutableStateOf("")
+        private set
 
-    val currentUser: FirebaseUser?
-        get() = repository.currentUser
+    fun signIn(email: String, password: String) {
+        viewModelScope.launch {
 
-    init {
-        if (repository.currentUser != null) {
-            _loginFlow.value = Resource.Success(repository.currentUser!!)
+
+            authUseCases.signIn(email,password).collect  { response ->
+                when (response) {
+                    is Response.Loading -> {
+                        toastMessage.value = "Login Failed"
+                    }
+                    is Response.Success -> {
+                        PrintLogs.printInfo("signIn success "+response.data)
+                        isUserSignInState.value = response.data
+                        toastMessage.value = "Login Successful"
+                    }
+                    is Response.Error -> {
+                        toastMessage.value = "Login Failed"
+                    }
+                }
+            }
         }
     }
 
-    fun loginUser(email: String, password: String) = viewModelScope.launch {
-        _loginFlow.value = Resource.Loading
-        val result = repository.login(email, password)
-        _loginFlow.value = result
-    }
 
-    fun signupUser(name: String, email: String, password: String) = viewModelScope.launch {
-        _signupFlow.value = Resource.Loading
-        val result = repository.signup(name, email, password)
-        _signupFlow.value = result
-    }
 
-    fun logout() = viewModelScope.launch {
-        val result = repository.logout()
 
-        if(  result.let { it is Resource.Success && it.result } == true){
-            _loginFlow.value=null
-            _signupFlow.value=null
-        }
-    }
+
+
+
+
 }

@@ -21,8 +21,8 @@ fun AppNavHost(
 
     val viewModel: AuthViewModel = hiltViewModel()
 
-    val currentUser = viewModel.currentUser
-    val start = if (currentUser != null) "ROUTE_HOME" else "ROUTE_LOGIN"
+    val isUserAuthenticated = viewModel.isUserSignInState.value
+    val start = if (isUserAuthenticated) "ROUTE_HOME" else "ROUTE_LOGIN"
 
 
     NavHost(

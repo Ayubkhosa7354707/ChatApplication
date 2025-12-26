@@ -3,10 +3,20 @@ package com.ayub.khosa.chatapplication.di
 
 
 import android.content.Context
-import com.ayub.khosa.chatapplication.repository.AuthRepository
-import com.ayub.khosa.chatapplication.repository.AuthRepositoryImpl
+import com.ayub.khosa.chatapplication.domain.repository.AuthRepository
+import com.ayub.khosa.chatapplication.data.repository.AuthRepositoryImpl
+import com.ayub.khosa.chatapplication.data.repository.HomeRepositoryImpl
+import com.ayub.khosa.chatapplication.domain.repository.HomeRepository
+import com.ayub.khosa.chatapplication.domain.usecase.authScreen.AuthUseCases
+import com.ayub.khosa.chatapplication.domain.usecase.authScreen.IsUserAuthenticatedInFirebase
+import com.ayub.khosa.chatapplication.domain.usecase.authScreen.SignIn
+import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.HomeUseCase
+import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.IsUserSignOutInFirebase
+import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.SignOut
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,10 +35,43 @@ object AppModule {
         return appContext
     }
 
-    @Provides
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
 
     @Provides
-    fun providesAuthRepository(impl: AuthRepositoryImpl): AuthRepository = impl
+    fun provideFirebaseAuthInstance() = FirebaseAuth.getInstance()
+
+    @Provides
+    fun provideFirebaseStorageInstance() = FirebaseStorage.getInstance()
+
+    @Provides
+    fun provideFirebaseDatabaseInstance() = FirebaseDatabase.getInstance()
+
+
+    @Provides
+    fun providesAuthRepository(
+        auth: FirebaseAuth,
+    ): AuthRepository = AuthRepositoryImpl(auth)
+
+    @Provides
+    fun providesAuthUseCases(authRepository: AuthRepository) = AuthUseCases(
+        isUserAuthenticated = IsUserAuthenticatedInFirebase(authRepository),
+        signIn = SignIn (authRepository)
+
+    )
+
+    @Provides
+    fun providesHomeRepository(
+        auth: FirebaseAuth,
+    ): HomeRepository = HomeRepositoryImpl(auth)
+
+
+
+
+    @Provides
+    fun provideHomeUseCase(homeRepository: HomeRepository) = HomeUseCase(
+        isUserAuthenticated = IsUserSignOutInFirebase(homeRepository),
+        signOut = SignOut(homeRepository)
+    )
+
 
 }

@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.ayub.khosa.chatapplication" />
+                  <option name="mobileSdkAppId" value="1:185523513182:android:af9b9347e48880e7cdd1cf" />
+                  <option name="projectId" value="chatapplication-563d0" />
+                  <option name="projectNumber" value="185523513182" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

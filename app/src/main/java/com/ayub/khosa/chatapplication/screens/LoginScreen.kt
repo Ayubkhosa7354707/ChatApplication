@@ -33,10 +33,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ayub.khosa.chatapplication.model.Resource
+import com.ayub.khosa.chatapplication.utils.Response
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
 import com.ayub.khosa.chatapplication.utils.PrintLogs
@@ -48,7 +49,6 @@ import com.ayub.khosa.chatapplication.viewmodel.AuthViewModel
 fun LoginScreen( navController: NavController) {
 
     val viewModel: AuthViewModel = hiltViewModel()
-    val authResource = viewModel?.loginFlow?.collectAsState()
 
     // email --> ayubkhosa@test.com
     // pasword --> ayub.khosa
@@ -57,10 +57,24 @@ fun LoginScreen( navController: NavController) {
     var input_password by rememberSaveable { mutableStateOf("") }
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
+    //Check User Authenticated
+    val isUserAuthenticated = viewModel.isUserSignInState.value
+    val context = LocalContext.current
 
-    var output_firebase by rememberSaveable { mutableStateOf("") }
+
+
+
 
     TitleText(Modifier.padding(top = 30.dp, start = 10.dp, end = 10.dp), "Login Screen Firebase")
+
+
+    if (isUserAuthenticated ) {
+        showToast(context, "Resource.Success Good loged in ")
+        navController.navigate("ROUTE_HOME")
+    }else{
+      //  showToast(context, "Resource.Success Not loged in ")
+
+
 
     Column(modifier = Modifier.padding(top = 80.dp, start = 10.dp, end = 10.dp)) {
         Text(text = "Email    --> ayubkhosa@test.com")
@@ -119,13 +133,12 @@ fun LoginScreen( navController: NavController) {
 
         Button(
             onClick = {
-                output_firebase=""
 
                 // email --> ayubkhosa@test.com
                 // pasword --> test123
                 input_email = "ayubkhosa@test.com"
-                input_password="test123"
-                viewModel?.loginUser(input_email, input_password)
+                input_password = "test123"
+                viewModel?.signIn(input_email, input_password)
 
             },
             shape = RectangleShape,
@@ -133,36 +146,7 @@ fun LoginScreen( navController: NavController) {
             ) {
             Text(text = "Login Button", style = MaterialTheme.typography.titleMedium)
         }
-
-
-        ////// resposnce
-        authResource?.value?.let {
-            when (it) {
-                is Resource.Failure -> {
-                    PrintLogs.printInfo(" Resource.Failure ")
-                    output_firebase="Resource.Failure"
-                    val context = LocalContext.current
-                    showToast(context, " Resource.Failure ")
-                }
-                is Resource.Loading -> {
-                    PrintLogs.printInfo("Resource.Loading ")
-                }
-                is Resource.Success -> {
-                    PrintLogs.printInfo("Resource.Success Good loged in ")
-
-                    output_firebase="Resource.Success Good loged in"
-                    val context = LocalContext.current
-                    showToast(context, "Resource.Success Good loged in ")
-                    navController.navigate("ROUTE_HOME")
-
-                }
-            }
-        }
-
-
-        Text(text = "--> "+output_firebase)
-
-
+    }
 
     }
 
