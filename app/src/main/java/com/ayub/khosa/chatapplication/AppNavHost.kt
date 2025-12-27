@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ayub.khosa.chatapplication.screens.HomeScreen
-import com.ayub.khosa.chatapplication.screens.LoginScreen
+import com.ayub.khosa.chatapplication.screens.SignInScreen
 import com.ayub.khosa.chatapplication.viewmodel.AuthViewModel
 
 
@@ -20,7 +20,6 @@ fun AppNavHost(
     ) {
 
     val viewModel: AuthViewModel = hiltViewModel()
-
     val isUserAuthenticated = viewModel.isUserSignInState.value
     val start = if (isUserAuthenticated) "ROUTE_HOME" else "ROUTE_LOGIN"
 
@@ -30,12 +29,34 @@ fun AppNavHost(
         navController = navController,
         startDestination = start
     ) {
+
+        //SignInScreen
         composable("ROUTE_LOGIN") {
-            LoginScreen( navController)
+            SignInScreen( navController)
         }
+//        SignUpScreen
+//        ProfileScreen
         composable("ROUTE_HOME") {
             HomeScreen(navController)
         }
+//        Userlist
+//        Userlist(
+//            navController = navController,
+//            snackbarHostState = snackbarHostState,
+//            keyboardController = keyboardController
+//        )
+
+//        ChatScreen
+
+//        ChatScreen(
+//            chatRoomUUID = chatroomUUID ?: "",
+//            opponentUUID = opponentUUID ?: "",
+//            registerUUID = registerUUID ?: "",
+//            oneSignalUserId = oneSignalUserId ?: "",
+//            navController = navController,
+//            snackbarHostState = snackbarHostState,
+//            keyboardController = keyboardController
+//        )
     }
 }
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.ayub.khosa.chatapplication.domain.model.UserStatus
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.utils.showToast
 import com.ayub.khosa.chatapplication.viewmodel.AuthViewModel
@@ -47,7 +48,8 @@ fun HomeScreen(navController: NavHostController) {
 
         Button(
             onClick = {
-                viewModel.signOut()
+                viewModel.setUserStatusToFirebase(UserStatus.OFFLINE)
+
 
             },
             shape = RectangleShape,

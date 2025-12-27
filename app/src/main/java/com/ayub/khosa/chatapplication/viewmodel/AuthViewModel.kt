@@ -6,8 +6,8 @@ package com.ayub.khosa.chatapplication.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ayub.khosa.chatapplication.domain.model.UserStatus
 import com.ayub.khosa.chatapplication.utils.Response
-import com.ayub.khosa.chatapplication.domain.repository.AuthRepository
 import com.ayub.khosa.chatapplication.domain.usecase.authScreen.AuthUseCases
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +26,10 @@ class AuthViewModel @Inject constructor(
     var toastMessage = mutableStateOf("")
         private set
 
+
+
+
+
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
 
@@ -38,6 +42,10 @@ class AuthViewModel @Inject constructor(
                     is Response.Success -> {
                         PrintLogs.printInfo("signIn success "+response.data)
                         isUserSignInState.value = response.data
+                        if (response.data) {
+                          //   setUserStatusToFirebase(UserStatus.ONLINE)
+                            setUserStatusToFirebase(UserStatus.ONLINE)
+                        }
                         toastMessage.value = "Login Successful"
                     }
                     is Response.Error -> {
@@ -50,7 +58,17 @@ class AuthViewModel @Inject constructor(
 
 
 
-
+    private fun setUserStatusToFirebase(userStatus: UserStatus) {
+        viewModelScope.launch {
+            authUseCases.setUserStatusToFirebase(userStatus).collect { response ->
+                when (response) {
+                    is Response.Loading -> {}
+                    is Response.Success -> {}
+                    is Response.Error -> {}
+                }
+            }
+        }
+    }
 
 
 

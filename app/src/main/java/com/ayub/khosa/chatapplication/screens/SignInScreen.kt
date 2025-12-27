@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,20 +32,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ayub.khosa.chatapplication.utils.Response
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
-import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.ayub.khosa.chatapplication.utils.showToast
 import com.ayub.khosa.chatapplication.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen( navController: NavController) {
+fun SignInScreen(navController: NavController) {
 
     val viewModel: AuthViewModel = hiltViewModel()
 
@@ -157,7 +153,7 @@ fun LoginScreen( navController: NavController) {
 @Composable
 fun LoginScreenPreviewLight() {
     ChatApplicationTheme {
-        LoginScreen( rememberNavController())
+        SignInScreen( rememberNavController())
     }
 }
 
@@ -165,6 +161,6 @@ fun LoginScreenPreviewLight() {
 @Composable
 fun LoginScreenPreviewDark() {
     ChatApplicationTheme {
-        LoginScreen( rememberNavController())
+        SignInScreen( rememberNavController())
     }
 }

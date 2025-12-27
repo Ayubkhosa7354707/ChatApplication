@@ -1,10 +1,9 @@
 package com.ayub.khosa.chatapplication.domain.usecase.homeScreen
 
 import com.ayub.khosa.chatapplication.domain.repository.HomeRepository
-import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.IsUserSignOutInFirebase
 
 
-class IsUserSignOutInFirebase(
+class IsUserAuthenticatedInFirebase(
     private val homeRepository: HomeRepository
 ) {
     suspend operator fun invoke() = homeRepository.IsUserSignOutInFirebase()

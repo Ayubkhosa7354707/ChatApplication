@@ -12,6 +12,7 @@ import com.ayub.khosa.chatapplication.domain.usecase.authScreen.IsUserAuthentica
 import com.ayub.khosa.chatapplication.domain.usecase.authScreen.SignIn
 import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.HomeUseCase
 import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.IsUserSignOutInFirebase
+
 import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.SignOut
 
 import com.google.firebase.auth.FirebaseAuth
@@ -50,19 +51,27 @@ object AppModule {
     @Provides
     fun providesAuthRepository(
         auth: FirebaseAuth,
-    ): AuthRepository = AuthRepositoryImpl(auth)
+        database: FirebaseDatabase
+    ): AuthRepository = AuthRepositoryImpl(
+        auth,
+        database = database
+    )
 
     @Provides
     fun providesAuthUseCases(authRepository: AuthRepository) = AuthUseCases(
         isUserAuthenticated = IsUserAuthenticatedInFirebase(authRepository),
-        signIn = SignIn (authRepository)
-
+        signIn = SignIn(authRepository),
+        setUserStatusToFirebase =  com.ayub.khosa.chatapplication.domain.usecase.authScreen.SetUserStatusToFirebase(authRepository)
     )
 
     @Provides
     fun providesHomeRepository(
         auth: FirebaseAuth,
-    ): HomeRepository = HomeRepositoryImpl(auth)
+        database: FirebaseDatabase
+    ): HomeRepository = HomeRepositoryImpl(
+        auth,
+        database = database
+    )
 
 
 
@@ -70,7 +79,8 @@ object AppModule {
     @Provides
     fun provideHomeUseCase(homeRepository: HomeRepository) = HomeUseCase(
         isUserAuthenticated = IsUserSignOutInFirebase(homeRepository),
-        signOut = SignOut(homeRepository)
+        signOut = SignOut(homeRepository),
+        setUserStatusToFirebase = com.ayub.khosa.chatapplication.domain.usecase.homeScreen.SetUserStatusToFirebase(homeRepository)
     )
 
 
