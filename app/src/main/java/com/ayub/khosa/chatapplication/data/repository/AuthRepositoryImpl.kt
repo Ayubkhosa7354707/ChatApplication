@@ -1,11 +1,16 @@
 package com.ayub.khosa.chatapplication.data.repository
 
+import androidx.credentials.Credential
+import androidx.credentials.CustomCredential
 import com.ayub.khosa.chatapplication.domain.model.UserStatus
 import com.ayub.khosa.chatapplication.utils.Response
 import com.ayub.khosa.chatapplication.domain.repository.AuthRepository
 import com.ayub.khosa.chatapplication.utils.PrintLogs
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.cancel
@@ -59,6 +64,37 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun onSignInWithGoogle(credential: Credential): Flow<Response<Boolean>> = callbackFlow {
+        try {
+        this@callbackFlow.trySendBlocking(Response.Loading)
+        if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+
+            val idToken= googleIdTokenCredential.idToken
+
+             PrintLogs.printInfo(" googleIdToken :" + idToken)
+
+
+            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+
+            firebaseAuth.signInWithCredential(firebaseCredential).await()
+            if (firebaseAuth.currentUser != null) {
+                this@callbackFlow.trySendBlocking(Response.Success(true))
+            } else {
+                this@callbackFlow.trySendBlocking(Response.Success(false))
+            }
+        } else {
+            this@callbackFlow.trySendBlocking(Response.Success(false))
+        }
+
+        } catch (e: Exception) {
+            this@callbackFlow.trySendBlocking(Response.Error("Error ->"+e.message ))
+        }
+        awaitClose {
+            channel.close()
+            cancel()
+        }
+    }
 
 
     override suspend  fun isUserAuthenticatedInFirebase(): Flow<Response<Boolean>> = callbackFlow {
@@ -104,8 +140,28 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun signUp(
+        email: String,
+        password: String
+    ): Flow<Response<Boolean>> = callbackFlow{
+        try {
+            this@callbackFlow.trySendBlocking(Response.Loading)
 
-
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+                if (it.user != null) {
+                    this@callbackFlow.trySendBlocking(Response.Success(true))
+                }
+            }.addOnFailureListener {
+                this@callbackFlow.trySendBlocking(Response.Error("Error -> "+it.message ))
+            }
+        } catch (e: Exception) {
+            this@callbackFlow.trySendBlocking(Response.Error("Error -> "+e.message ))
+        }
+        awaitClose {
+            channel.close()
+            cancel()
+        }
+    }
 
 
 //    override suspend fun signOut(): Flow<Response<Boolean>> = callbackFlow{

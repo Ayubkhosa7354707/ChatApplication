@@ -5,5 +5,7 @@ import com.ayub.khosa.chatapplication.domain.usecase.authScreen.SetUserStatusToF
 data class AuthUseCases(
     val isUserAuthenticated: IsUserAuthenticatedInFirebase,
     val signIn: SignIn,
+    val onSignInWithGoogle: OnSignInWithGoogle,
     val setUserStatusToFirebase: SetUserStatusToFirebase,
+    val signUp: SignUp,
 )

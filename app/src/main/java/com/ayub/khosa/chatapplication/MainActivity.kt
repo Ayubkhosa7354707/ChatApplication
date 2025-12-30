@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.ayub.khosa.chatapplication.screens.navigation.BottomNavigationBar
 import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 content = {
                     ChatApplicationTheme {
-                        AppNavHost()
+                        BottomNavigationBar()
                     }
                 }
             )

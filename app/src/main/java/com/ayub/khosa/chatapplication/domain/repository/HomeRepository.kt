@@ -9,4 +9,7 @@ interface HomeRepository {
     suspend fun IsUserSignOutInFirebase(): Flow<Response<Boolean>>
     suspend  fun setUserStatusToFirebase(userStatus: UserStatus): Flow<Response<Boolean>>
 
+    suspend fun getfcmtoken(): Flow<Response<String>>
+
+
 }
