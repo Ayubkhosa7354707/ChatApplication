@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.volley)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -102,6 +104,8 @@ dependencies {
 
     // Declare the dependency for the Cloud Firestore library
     implementation("com.google.firebase:firebase-firestore")
+    // Add the main storage library dependency
+    implementation("com.google.firebase:firebase-storage")
     // dagger hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("androidx.room:room-compiler:2.6.1")

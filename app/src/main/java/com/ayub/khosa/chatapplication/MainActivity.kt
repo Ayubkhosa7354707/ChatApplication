@@ -1,51 +1,55 @@
 package com.ayub.khosa.chatapplication
 
-import android.content.SharedPreferences
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.ayub.khosa.chatapplication.screens.navigation.BottomNavigationBar
 import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
-import com.ayub.khosa.chatapplication.utils.Constant
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var pref: SharedPreferences
 
-
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
         setContent {
-            ChatApplicationTheme {
+//            ChatApplicationTheme {
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 //                    Greeting(
 //                        name = "Android",
 //                        modifier = Modifier.padding(innerPadding)
 //                    )
 //                }
+//            }
 
-                MainApp()
 
-            }
+            val snackbarHostState = remember { SnackbarHostState() }
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                content = {
+                    ChatApplicationTheme {
+                        BottomNavigationBar()
+                    }
+                }
+            )
+
+
         }
-
-        pref.edit().putString(Constant.KEY_USER_ID, "ayub").apply()
-        PrintLogs.printInfo(" KEY_USER_ID  value put in pref ")
-
-
-        var KEY_USER_ID = pref.getString(Constant.KEY_USER_ID, "...")
-        PrintLogs.printInfo("KEY_USER_ID  " + KEY_USER_ID)
 
 
     }
@@ -53,6 +57,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
+    PrintLogs.printInfo("Hello $name!")
     Text(
         text = "Hello $name!",
         modifier = modifier
