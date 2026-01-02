@@ -1,8 +1,6 @@
 package com.ayub.khosa.chatapplication.utils
 
 
-
-
 import android.content.Context
 import android.widget.Toast
 
