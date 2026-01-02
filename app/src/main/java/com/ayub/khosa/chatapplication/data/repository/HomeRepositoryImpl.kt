@@ -85,7 +85,7 @@ class HomeRepositoryImpl @Inject constructor(
             try {
                 this@callbackFlow.trySendBlocking(Response.Loading)
                 if (firebaseAuth.currentUser != null) {
-                    val useremail = firebaseAuth.currentUser?.email.toString()
+                    firebaseAuth.currentUser?.email.toString()
                     val uid: String = firebaseAuth.currentUser?.uid.toString()
                     val databaseReference =
                         firebaseDatabase.getReference("Profiles").child(uid).child("profile")

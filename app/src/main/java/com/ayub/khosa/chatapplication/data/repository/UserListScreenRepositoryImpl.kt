@@ -44,7 +44,7 @@ class UserListScreenRepositoryImpl @Inject constructor(
                                 PrintLogs.printInfo("searchUserFromFirebase -> email " + user.userEmail)
                                 PrintLogs.printInfo("searchUserFromFirebase -> id " + user.profileUUID)
                                 PrintLogs.printInfo("searchUserFromFirebase -> name " + user.userName)
-                                PrintLogs.printInfo("searchUserFromFirebase -> fcmToken "+user.fcmToken)
+                                PrintLogs.printInfo("searchUserFromFirebase -> fcmToken " + user.fcmToken)
                                 this@callbackFlow.trySendBlocking(Response.Success(user))
                             }
                         }
@@ -52,7 +52,7 @@ class UserListScreenRepositoryImpl @Inject constructor(
 
                     myJob.invokeOnCompletion {
                         if (!flagForControl) {
-                             PrintLogs.printE("searchUserFromFirebase -> User Not Found")
+                            PrintLogs.printE("searchUserFromFirebase -> User Not Found")
                             this@callbackFlow.trySendBlocking(Response.Error("User Not Found"))
                         }
                     }
@@ -69,13 +69,13 @@ class UserListScreenRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun createChatRoomToFirebase(acceptorUUID: String): Flow<Response<String>> =
+    override suspend fun createChatRoomToFirebase(reciver_UUID: String): Flow<Response<String>> =
         callbackFlow {
             try {
                 this@callbackFlow.trySendBlocking(Response.Loading)
-                val requesterUUID = firebaseAuth.currentUser?.uid
+                val sender_UUID = firebaseAuth.currentUser?.uid
                 val hashMapOfRequesterUUIDAndAcceptorUUID = hashMapOf<String, String>()
-                hashMapOfRequesterUUIDAndAcceptorUUID[requesterUUID!!] = acceptorUUID
+                hashMapOfRequesterUUIDAndAcceptorUUID[sender_UUID!!] = reciver_UUID
                 val databaseReference = firebaseDatabase.getReference("Chat_Rooms")
                 val gson = Gson()
                 val requesterUUIDAndAcceptorUUID =
@@ -98,27 +98,25 @@ class UserListScreenRepositoryImpl @Inject constructor(
     override suspend fun loadFriendListFromFirebase(): Flow<Response<List<User>>> = callbackFlow {
         try {
             this@callbackFlow.trySendBlocking(Response.Loading)
-
+            val sender_UUID = firebaseAuth.currentUser?.uid
             val databaseReference = firebaseDatabase.getReference("Profiles")
 
             var user: User?
             val friendList = mutableListOf<User>()
             databaseReference.get().addOnSuccessListener {
 
+                for (i in it.children) {
+                    user = i.child("profile").getValue(User::class.java)!!
 
-
-                    for (i in it.children) {
-                        user = i.child("profile").getValue(User::class.java)!!
-
+                    if(user.profileUUID != sender_UUID) {
                         friendList.add(user)
-                            PrintLogs.printInfo("<<-----loadFriendList ----->>  ")
-                            PrintLogs.printInfo("loadFriendList -> email " + user.userEmail)
-                            PrintLogs.printInfo("loadFriendList -> id " + user.profileUUID)
-                            PrintLogs.printInfo("loadFriendList -> name " + user.userName)
-                            PrintLogs.printInfo("loadFriendList -> fcmToken "+user.fcmToken)
-
-
+                        PrintLogs.printInfo("<<-----loadFriendList ----->>  ")
+                        PrintLogs.printInfo("loadFriendList -> email " + user.userEmail)
+                        PrintLogs.printInfo("loadFriendList -> id " + user.profileUUID)
+                        PrintLogs.printInfo("loadFriendList -> name " + user.userName)
+                        PrintLogs.printInfo("loadFriendList -> fcmToken " + user.fcmToken)
                     }
+                }
 
 
                 this@callbackFlow.trySendBlocking(Response.Success(friendList))
@@ -135,18 +133,18 @@ class UserListScreenRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkChatRoomExistedFromFirebase(acceptorUUID: String): Flow<Response<String>> =
+    override suspend fun checkChatRoomExistedFromFirebase(reciver_UUID: String): Flow<Response<String>> =
         callbackFlow {
             try {
                 this@callbackFlow.trySendBlocking(Response.Loading)
 
-                val requesterUUID = firebaseAuth.currentUser?.uid
+                val sender_UUID = firebaseAuth.currentUser?.uid
 
                 val hashMapOfRequesterUUIDAndAcceptorUUID = hashMapOf<String, String>()
-                hashMapOfRequesterUUIDAndAcceptorUUID[requesterUUID!!] = acceptorUUID
+                hashMapOfRequesterUUIDAndAcceptorUUID[sender_UUID!!] = reciver_UUID
 
                 val hashMapOfAcceptorUUIDAndRequesterUUID = hashMapOf<String, String>()
-                hashMapOfAcceptorUUIDAndRequesterUUID[acceptorUUID] = requesterUUID
+                hashMapOfAcceptorUUIDAndRequesterUUID[reciver_UUID] = sender_UUID
 
                 val gson = Gson()
                 val requesterUUIDAndAcceptorUUID =
@@ -178,8 +176,8 @@ class UserListScreenRepositoryImpl @Inject constructor(
                             //ChatRoom opened by Requester
                             val hashMapOfRequesterUUIDAndAcceptorUUIDForSaveMessagesToFirebase =
                                 hashMapOf<String, Any>()
-                            hashMapOfRequesterUUIDAndAcceptorUUIDForSaveMessagesToFirebase[requesterUUID] =
-                                acceptorUUID
+                            hashMapOfRequesterUUIDAndAcceptorUUIDForSaveMessagesToFirebase[sender_UUID] =
+                                reciver_UUID
 
                             val gson = Gson()
                             chatRoomUUIDString = gson.toJson(
@@ -193,8 +191,8 @@ class UserListScreenRepositoryImpl @Inject constructor(
                             //ChatRoom opened by Acceptor
                             val hashMapOfAcceptorUUIDAndRequesterUUIDForSaveMessagesToFirebase =
                                 hashMapOf<String, Any>()
-                            hashMapOfAcceptorUUIDAndRequesterUUIDForSaveMessagesToFirebase[acceptorUUID] =
-                                requesterUUID
+                            hashMapOfAcceptorUUIDAndRequesterUUIDForSaveMessagesToFirebase[reciver_UUID] =
+                                sender_UUID
 
                             val gson = Gson()
                             chatRoomUUIDString = gson.toJson(

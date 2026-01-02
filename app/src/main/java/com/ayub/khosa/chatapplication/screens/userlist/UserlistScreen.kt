@@ -1,6 +1,5 @@
 package com.ayub.khosa.chatapplication.screens.userlist
 
-import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,6 @@ import androidx.navigation.NavHostController
 import com.ayub.khosa.chatapplication.domain.model.User
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.screens.navigation.Screens
-import com.ayub.khosa.chatapplication.utils.PrintLogs
 import com.ayub.khosa.chatapplication.utils.Utils
 import com.ayub.khosa.chatapplication.utils.showToast
 
@@ -38,7 +36,7 @@ fun UserlistScreen(navController: NavHostController) {
 
     val viewModel: UserListViewModel = hiltViewModel()
     val context = LocalContext.current
-    if(!Utils.isNetworkAvailable(context)){
+    if (!Utils.isNetworkAvailable(context)) {
         showToast(context, "Network is not available")
     }
 
@@ -47,10 +45,10 @@ fun UserlistScreen(navController: NavHostController) {
     var registerUUID by rememberSaveable { mutableStateOf("") }
 
 
-    if (viewModel.chatRoomId.value.toString().isNotEmpty()  ) {
+    if (viewModel.chatRoomId.value.toString().isNotEmpty()) {
         // go to chat screen
         var chatRoomId = viewModel.chatRoomId.value
-        navController.navigate(Screens.Chat.screen_route + "/$chatRoomId/$registerUUID/$reciver_fcmtoken" )
+        navController.navigate(Screens.Chat.screen_route + "/$chatRoomId/$registerUUID/$reciver_fcmtoken")
         {
             popUpTo(Screens.Chat.screen_route) {
                 inclusive = true
@@ -73,19 +71,16 @@ fun UserlistScreen(navController: NavHostController) {
                 "Welcome to users List Screen"
             )
 
-
-
-
-
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize().background(Color.LightGray),
+                    .fillMaxSize()
+                    .background(Color.LightGray),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 items(loadFriendList.value) { item ->
-                    MyUser(item, onClick = {item1->
-                        registerUUID=item1.profileUUID
-                        reciver_fcmtoken=item1.fcmToken
+                    MyUser(item, onClick = { item1 ->
+                        registerUUID = item1.profileUUID
+                        reciver_fcmtoken = item1.fcmToken
                         viewModel.checkChatRoomExistedFromFirebase(registerUUID)
                     })
                 }
@@ -95,19 +90,29 @@ fun UserlistScreen(navController: NavHostController) {
 }
 
 @Composable
-fun MyUser(user: User , onClick: (User) -> Unit) {
+fun MyUser(user: User, onClick: (User) -> Unit) {
 
     Card(
         modifier = Modifier
-            .fillMaxSize().clickable { onClick(user) }
+            .fillMaxSize()
+            .clickable { onClick(user) }
             .padding(vertical = 4.dp)
     ) {
-        Text( text = ""+user.userName , fontSize = 20.sp , modifier = Modifier.padding(5.dp), color = Color.Red)
+        Text(
+            text = "" + user.userName,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(5.dp),
+            color = Color.Red
+        )
 
-        Text(text = ""+user.userEmail , fontSize = 15.sp ,modifier = Modifier.padding(5.dp) , color = Color.Blue)
+        Text(
+            text = "" + user.userEmail,
+            fontSize = 15.sp,
+            modifier = Modifier.padding(5.dp),
+            color = Color.Blue
+        )
 
     }
-
 
 
 }

@@ -4,4 +4,4 @@ data class ChatScreenUseCases(
     val insertMessageToFirebase: InsertMessageToFirebase,
     val loadMessageFromFirebase: LoadMessageFromFirebase,
 
-)
+    )

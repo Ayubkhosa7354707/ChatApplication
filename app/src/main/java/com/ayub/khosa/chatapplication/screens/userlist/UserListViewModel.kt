@@ -26,6 +26,7 @@ class UserListViewModel @Inject constructor(
 
     init {
         PrintLogs.printInfo("UserListViewModel ")
+        chatRoomId.value = ""
         loadFriendList()
     }
 
@@ -33,10 +34,10 @@ class UserListViewModel @Inject constructor(
     var loadFriendList = mutableStateOf<List<User>>(listOf())
         private set
 
-    fun loadFriendList(){
+    fun loadFriendList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                userListScreenUseCases.loadFriendListFromFirebase().collect {response ->
+                userListScreenUseCases.loadFriendListFromFirebase().collect { response ->
                     when (response) {
                         is Response.Error -> {
                             PrintLogs.printE("loadFriendList Error " + response.message)
@@ -99,11 +100,11 @@ class UserListViewModel @Inject constructor(
     }
 
 
-  private  fun createChatRoomToFirebase(acceptorUUID: String) {
+    private fun createChatRoomToFirebase(reciver_UUID: String) {
         PrintLogs.printD("createChatRoomToFirebase  ")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                userListScreenUseCases.createChatRoomToFirebase(acceptorUUID).collect { response ->
+                userListScreenUseCases.createChatRoomToFirebase(reciver_UUID).collect { response ->
                     when (response) {
                         is Response.Error -> {
                             PrintLogs.printE("createChatRoomToFirebase Error " + response.message)
@@ -132,36 +133,33 @@ class UserListViewModel @Inject constructor(
     }
 
 
-
-
-
-
-    fun checkChatRoomExistedFromFirebase(acceptorUUID: String)   {
+    fun checkChatRoomExistedFromFirebase(acceptorUUID: String) {
         PrintLogs.printD("checkChatRoomExistedFromFirebase  ")
-        chatRoomId.value =""
+        chatRoomId.value = ""
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                userListScreenUseCases.checkChatRoomExistedFromFirebase(acceptorUUID).collect { response ->
-                    when (response) {
-                        is Response.Error -> {
-                            PrintLogs.printE("checkChatRoomExistedFromFirebase Error " + response.message)
-                        }
+                userListScreenUseCases.checkChatRoomExistedFromFirebase(acceptorUUID)
+                    .collect { response ->
+                        when (response) {
+                            is Response.Error -> {
+                                PrintLogs.printE("checkChatRoomExistedFromFirebase Error " + response.message)
+                            }
 
-                        is Response.Loading -> {
-                            PrintLogs.printD("checkChatRoomExistedFromFirebase Loading ")
-                        }
+                            is Response.Loading -> {
+                                PrintLogs.printD("checkChatRoomExistedFromFirebase Loading ")
+                            }
 
-                        is Response.Success<*> -> {
-                            PrintLogs.printInfo("<---- checkChatRoomExistedFromFirebase success ---> ")
-                            PrintLogs.printInfo("checkChatRoomExistedFromFirebase success  : " + response.data)
-                            if (response.data.toString()== "NO_CHATROOM_IN_FIREBASE_DATABASE") {
-                                 createChatRoomToFirebase( acceptorUUID  )
-                            }else{
-                                chatRoomId.value = response.data.toString()
+                            is Response.Success<*> -> {
+                                PrintLogs.printInfo("<---- checkChatRoomExistedFromFirebase success ---> ")
+                                PrintLogs.printInfo("checkChatRoomExistedFromFirebase success  : " + response.data)
+                                if (response.data.toString() == "NO_CHATROOM_IN_FIREBASE_DATABASE") {
+                                    createChatRoomToFirebase(acceptorUUID)
+                                } else {
+                                    chatRoomId.value = response.data.toString()
+                                }
                             }
                         }
                     }
-                }
 
             } catch (e: Exception) {
                 PrintLogs.printD("Exception  " + e.message)
