@@ -1,7 +1,6 @@
 package com.ayub.khosa.chatapplication.domain.usecase.homeScreen
 
 import com.ayub.khosa.chatapplication.domain.repository.HomeRepository
-import com.ayub.khosa.chatapplication.domain.usecase.homeScreen.IsUserSignOutInFirebase
 
 
 class IsUserSignOutInFirebase(

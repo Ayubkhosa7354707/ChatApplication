@@ -2,9 +2,8 @@ package com.ayub.khosa.chatapplication.domain.usecase.homeScreen
 
 import com.ayub.khosa.chatapplication.domain.repository.HomeRepository
 
-class Getfcmtoken  (
+class GetUserFirebase (
     private val homeRepository: HomeRepository
 ) {
-    suspend operator fun invoke() =
-        homeRepository.getfcmtoken()
+    suspend operator fun invoke() = homeRepository.getUserFirebase()
 }
