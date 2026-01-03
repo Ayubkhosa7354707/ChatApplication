@@ -35,7 +35,7 @@ fun HomeScreen(navController: NavHostController) {
     //Check User Authenticated
     val isUserSignOutInFirebase = viewModel.isUserSignOutInFirebase.value
     val context = LocalContext.current
-    if(!Utils.isNetworkAvailable(context)){
+    if (!Utils.isNetworkAvailable(context)) {
         showToast(context, "Network is not available")
     }
     if (isUserSignOutInFirebase) {
@@ -64,13 +64,12 @@ fun HomeScreen(navController: NavHostController) {
                 Modifier.padding(top = 30.dp, start = 10.dp, end = 10.dp),
                 "Welcome to Home Screen"
             )
-            Text(text = ""+viewModel.myUser.value.userName)
-            Text(text = ""+viewModel.myUser.value.userEmail)
+            Text(text = "" + viewModel.myUser.value.userName)
+            Text(text = "" + viewModel.myUser.value.userEmail)
 
             Button(
                 onClick = {
                     viewModel.setUserStatusToFirebase(UserStatus.OFFLINE)
-
 
                 },
                 shape = RectangleShape,

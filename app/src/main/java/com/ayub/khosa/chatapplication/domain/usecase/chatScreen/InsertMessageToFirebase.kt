@@ -8,7 +8,7 @@ class InsertMessageToFirebase(
 
     suspend operator fun invoke(
         chatRoomUUID: String,
-        messageTitle:String,
+        messageTitle: String,
         messageContent: String,
         registerUUID: String,
         reciver_fcmtoken: String

@@ -69,7 +69,7 @@ fun SignInScreen(navController: NavController) {
     //Check User Authenticated
     val isUserAuthenticated = viewModel.isUserSignInState.value
     val context = LocalContext.current
-    if(!Utils.isNetworkAvailable(context)){
+    if (!Utils.isNetworkAvailable(context)) {
         showToast(context, "Network is not available")
     }
 
@@ -179,6 +179,7 @@ fun SignInScreen(navController: NavController) {
         }
     }
 }
+
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun LoginScreenPreviewLight() {
@@ -186,6 +187,7 @@ fun LoginScreenPreviewLight() {
         SignInScreen(rememberNavController())
     }
 }
+
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun LoginScreenPreviewDark() {

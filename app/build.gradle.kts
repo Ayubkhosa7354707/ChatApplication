@@ -137,5 +137,7 @@ dependencies {
 
 
 
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1") // Check for the latest version
+
 
 }

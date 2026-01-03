@@ -1,12 +1,11 @@
 package com.ayub.khosa.chatapplication.utils
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
-
-
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+
 object Utils {
 
     fun isNetworkAvailable(context: Context): Boolean {

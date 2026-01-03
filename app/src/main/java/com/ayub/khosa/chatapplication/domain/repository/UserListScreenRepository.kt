@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserListScreenRepository {
     suspend fun searchUserFromFirebase(userEmail: String): Flow<Response<User>>
-    suspend fun createChatRoomToFirebase(acceptorUUID: String): Flow<Response<String>>
+    suspend fun createChatRoomToFirebase(reciver_UUID: String): Flow<Response<String>>
     suspend fun loadFriendListFromFirebase(): Flow<Response<List<User>>>
 
-    suspend fun checkChatRoomExistedFromFirebase(acceptorUUID: String): Flow<Response<String>>
+    suspend fun checkChatRoomExistedFromFirebase(reciver_UUID: String): Flow<Response<String>>
 }

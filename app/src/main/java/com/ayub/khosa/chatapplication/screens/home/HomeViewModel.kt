@@ -75,13 +75,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-   private fun getUserFirebase() {
+    private fun getUserFirebase() {
         viewModelScope.launch {
             homeUseCase.getUserFirebase().collect { response ->
                 when (response) {
                     is Response.Loading -> {}
                     is Response.Success -> {
-                        myUser.value=response.data
+                        myUser.value = response.data
                     }
 
                     is Response.Error -> {}

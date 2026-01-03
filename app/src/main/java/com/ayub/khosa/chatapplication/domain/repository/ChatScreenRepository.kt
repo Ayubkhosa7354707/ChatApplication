@@ -1,6 +1,5 @@
 package com.ayub.khosa.chatapplication.domain.repository
 
-import android.R
 import com.ayub.khosa.chatapplication.domain.model.ChatMessage
 import com.ayub.khosa.chatapplication.utils.Response
 import kotlinx.coroutines.flow.Flow
@@ -14,5 +13,5 @@ interface ChatScreenRepository {
         reciver_fcmtoken: String
     ): Flow<Response<Boolean>>
 
-    fun loadMessageFromFirebase(chatRoomUUID: String, registerUUID: String):  Flow<Response<List<ChatMessage>>>
+    fun loadMessageFromFirebase(chatRoomUUID: String): Flow<Response<List<ChatMessage>>>
 }

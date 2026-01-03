@@ -35,34 +35,33 @@ class AuthViewModel @Inject constructor(
     }
 
 
-
     fun signIn(email: String, password: String) {
 
-            viewModelScope.launch {
+        viewModelScope.launch {
 
 
-                authUseCases.signIn(email, password).collect { response ->
-                    when (response) {
-                        is Response.Loading -> {
-                            toastMessage.value = ""
+            authUseCases.signIn(email, password).collect { response ->
+                when (response) {
+                    is Response.Loading -> {
+                        toastMessage.value = ""
+                    }
+
+                    is Response.Success -> {
+                        PrintLogs.printInfo("signIn success " + response.data)
+                        isUserSignInState.value = response.data
+                        if (response.data) {
+
+                            setUserStatusToFirebase(UserStatus.ONLINE)
                         }
+                        toastMessage.value = "Login Successful"
+                    }
 
-                        is Response.Success -> {
-                            PrintLogs.printInfo("signIn success " + response.data)
-                            isUserSignInState.value = response.data
-                            if (response.data) {
-
-                                setUserStatusToFirebase(UserStatus.ONLINE)
-                            }
-                            toastMessage.value = "Login Successful"
-                        }
-
-                        is Response.Error -> {
-                            toastMessage.value = "Login Failed"
-                        }
+                    is Response.Error -> {
+                        toastMessage.value = "Login Failed"
                     }
                 }
             }
+        }
 
     }
 
@@ -70,51 +69,51 @@ class AuthViewModel @Inject constructor(
     fun signUp(email: String, password: String) {
 
 
-            viewModelScope.launch {
+        viewModelScope.launch {
 
 
-                authUseCases.signUp(email, password).collect { response ->
-                    when (response) {
-                        is Response.Loading -> {
-                            toastMessage.value = ""
+            authUseCases.signUp(email, password).collect { response ->
+                when (response) {
+                    is Response.Loading -> {
+                        toastMessage.value = ""
+                    }
+
+                    is Response.Success -> {
+                        PrintLogs.printInfo("signIn success " + response.data)
+                        isUserSignUpState.value = response.data
+                        if (response.data) {
+
+                            setUserStatusToFirebase(UserStatus.ONLINE)
                         }
+                        toastMessage.value = "Sign up Successful"
+                    }
 
-                        is Response.Success -> {
-                            PrintLogs.printInfo("signIn success " + response.data)
-                            isUserSignUpState.value = response.data
-                            if (response.data) {
-
-                                setUserStatusToFirebase(UserStatus.ONLINE)
-                            }
-                            toastMessage.value = "Sign up Successful"
-                        }
-
-                        is Response.Error -> {
-                            toastMessage.value = "Sign up Failed"
-                        }
+                    is Response.Error -> {
+                        toastMessage.value = "Sign up Failed"
                     }
                 }
             }
+        }
 
     }
 
 
     private fun setUserStatusToFirebase(userStatus: UserStatus) {
 
-            viewModelScope.launch {
-                authUseCases.setUserStatusToFirebase(userStatus).collect { response ->
-                    when (response) {
-                        is Response.Loading -> {}
-                        is Response.Success -> {}
-                        is Response.Error -> {}
-                    }
+        viewModelScope.launch {
+            authUseCases.setUserStatusToFirebase(userStatus).collect { response ->
+                when (response) {
+                    is Response.Loading -> {}
+                    is Response.Success -> {}
+                    is Response.Error -> {}
                 }
             }
+        }
 
     }
 
     fun onSignInWithGoogle(credential: Credential) {
-   viewModelScope.launch {
+        viewModelScope.launch {
 
 
             authUseCases.onSignInWithGoogle(credential).collect { response ->
@@ -147,31 +146,31 @@ class AuthViewModel @Inject constructor(
 
         PrintLogs.printD("getfcmtoken  ")
 
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
 
-                    authUseCases.getfcmtoken().collect { response ->
-                        when (response) {
-                            is Response.Loading -> {
-                                toastMessage.value = ""
+                authUseCases.getfcmtoken().collect { response ->
+                    when (response) {
+                        is Response.Loading -> {
+                            toastMessage.value = ""
 
-                            }
-
-                            is Response.Success -> {
-                                PrintLogs.printInfo("getfcmtoken success " + response.data)
-                                fcmtoken.value = response.data
-                                toastMessage.value = "getfcmtoken Successful"
-                            }
-
-                            is Response.Error -> PrintLogs.printE("Error getfcmtoken " + response.message)
                         }
 
+                        is Response.Success -> {
+                            PrintLogs.printInfo("getfcmtoken success " + response.data)
+                            fcmtoken.value = response.data
+                            toastMessage.value = "getfcmtoken Successful"
+                        }
 
+                        is Response.Error -> PrintLogs.printE("Error getfcmtoken " + response.message)
                     }
-                } catch (e: Exception) {
-                    PrintLogs.printD("Exception  " + e.message)
+
+
                 }
+            } catch (e: Exception) {
+                PrintLogs.printD("Exception  " + e.message)
             }
+        }
 
     }
 

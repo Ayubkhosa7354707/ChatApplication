@@ -138,9 +138,9 @@ object AppModule {
         firebaseAuth = firebaseAuth,
         firebaseDatabase = database,
     )
+
     @Provides
-    fun providesChatScreenUseCases(chatScreenRepository: ChatScreenRepository)
-    = ChatScreenUseCases(
+    fun providesChatScreenUseCases(chatScreenRepository: ChatScreenRepository) = ChatScreenUseCases(
         insertMessageToFirebase = InsertMessageToFirebase(chatScreenRepository = chatScreenRepository),
         loadMessageFromFirebase = LoadMessageFromFirebase(chatScreenRepository = chatScreenRepository),
     )

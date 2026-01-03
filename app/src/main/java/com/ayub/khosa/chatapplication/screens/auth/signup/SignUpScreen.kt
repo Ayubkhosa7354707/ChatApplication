@@ -51,7 +51,7 @@ fun SignUpScreen(navController: NavController) {
 
     val viewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
-    if(!Utils.isNetworkAvailable(context)){
+    if (!Utils.isNetworkAvailable(context)) {
         showToast(context, "Network is not available")
     }
     var input_email by remember {
