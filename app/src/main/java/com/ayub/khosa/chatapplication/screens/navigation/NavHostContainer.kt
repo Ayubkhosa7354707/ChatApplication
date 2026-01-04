@@ -4,15 +4,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ayub.khosa.chatapplication.screens.auth.AuthViewModel
 import com.ayub.khosa.chatapplication.screens.auth.signin.SignInScreen
 import com.ayub.khosa.chatapplication.screens.auth.signup.SignUpScreen
 import com.ayub.khosa.chatapplication.screens.chat.ChatScreen
 import com.ayub.khosa.chatapplication.screens.home.HomeScreen
+import com.ayub.khosa.chatapplication.screens.home.HomeViewModel
 import com.ayub.khosa.chatapplication.screens.userlist.UserlistScreen
 import com.ayub.khosa.chatapplication.utils.PrintLogs
 
@@ -24,11 +27,17 @@ fun NavHostContainer(
 ) {
 
 
+    val viewModel: HomeViewModel= hiltViewModel()
+
     NavHost(
         navController = navController,
 
         // set the start destination as home
-        startDestination = Screens.SignIn.fullRoute,
+        if(viewModel.myUser.value.profileUUID.isEmpty()){
+          Screens.SignIn.fullRoute
+        }else {
+            Screens.Home.fullRoute
+        },
 
         // Set the padding provided by scaffold
         modifier = Modifier.padding(paddingValues = padding),
