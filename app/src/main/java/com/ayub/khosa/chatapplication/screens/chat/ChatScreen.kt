@@ -1,7 +1,5 @@
 package com.ayub.khosa.chatapplication.screens.chat
 
-import android.R.attr.bottom
-import android.R.attr.top
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -32,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
@@ -47,11 +44,6 @@ import com.ayub.khosa.chatapplication.screens.navigation.Screens
 import com.ayub.khosa.chatapplication.utils.Utils
 import com.ayub.khosa.chatapplication.utils.showToast
 import kotlin.random.Random
-
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.constraintlayout.compose.ConstraintLayout
-import kotlinx.coroutines.NonDisposableHandle.parent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
@@ -105,8 +97,7 @@ fun ChatScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-
-                 val (row,list, text) = createRefs()
+ 
                 TitleText(
                     Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
                     "Welcome to Chat Screen ",
@@ -143,11 +134,11 @@ fun ChatScreen(
                     horizontalArrangement = Arrangement.SpaceBetween, // Distributes space evenly between children
                     verticalAlignment = Alignment.CenterVertically // Aligns children vertically in the center
                 ) {
-                    var text by remember { mutableStateOf("") }
+                    var messageBody by remember { mutableStateOf("") }
                     // TextField for user input
                     TextField(
-                        value = text,
-                        onValueChange = { text = it },
+                        value = messageBody,
+                        onValueChange = { messageBody = it },
                         label = { Text("Enter your Message ") },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
@@ -161,10 +152,11 @@ fun ChatScreen(
                             viewModel.insertMessageToFirebase(
                                 chatRoomId.toString(),
                                 "Message Title " + randomInttitle,
-                                text + " " + randomIntbody,
+                                messageBody + " " + randomIntbody,
                                 reciver_UUID.toString(),
                                 reciver_fcmtoken.toString()
                             )
+                            messageBody=""
 
                         },
                         shape = RectangleShape,
