@@ -1,8 +1,7 @@
 package com.ayub.khosa.chatapplication.screens.auth.signin
 
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,9 +40,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ayub.khosa.chatapplication.R
+import com.ayub.khosa.chatapplication.data.repository.AuthRepositoryImpl
+import com.ayub.khosa.chatapplication.domain.repository.AuthRepository
+import com.ayub.khosa.chatapplication.domain.usecase.authScreen.AuthUseCases
+import com.ayub.khosa.chatapplication.domain.usecase.authScreen.IsUserAuthenticatedInFirebase
 import com.ayub.khosa.chatapplication.screens.auth.AuthViewModel
 import com.ayub.khosa.chatapplication.screens.auth.signin.google.AuthenticationButton
 import com.ayub.khosa.chatapplication.screens.common.TitleText
@@ -52,12 +55,12 @@ import com.ayub.khosa.chatapplication.screens.navigation.Screens
 import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
 import com.ayub.khosa.chatapplication.utils.Utils
 import com.ayub.khosa.chatapplication.utils.showToast
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInScreen(navController: NavController) {
-
-    val viewModel: AuthViewModel = hiltViewModel()
+fun SignInScreen(navController: NavController , viewModel: AuthViewModel = hiltViewModel() ){
 
 
     // email --> ayubkhosa@test.com
@@ -101,8 +104,8 @@ fun SignInScreen(navController: NavController) {
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.LightGray)
+                    .size(150.dp)
+                    .background(Color.Transparent)
             )
 // email field
             OutlinedTextField(
@@ -168,8 +171,11 @@ fun SignInScreen(navController: NavController) {
                     input_password = "test123"
                     viewModel.signIn(input_email, input_password)
                 },
-                shape = RectangleShape,
-                enabled = input_email.isNotEmpty() && input_password.isNotEmpty() && input_password.length > 6
+//                shape = RectangleShape,
+                enabled = input_email.isNotEmpty() && input_password.isNotEmpty() && input_password.length > 6,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 0.dp),
             ) {
                 Text(text = "Login Button", style = MaterialTheme.typography.titleMedium)
             }
@@ -180,18 +186,11 @@ fun SignInScreen(navController: NavController) {
     }
 }
 
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_NO)
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview(showBackground = true)
 @Composable
-fun LoginScreenPreviewLight() {
+fun LoginScreenPreview() {
     ChatApplicationTheme {
-        SignInScreen(rememberNavController())
-    }
-}
-
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun LoginScreenPreviewDark() {
-    ChatApplicationTheme {
-        SignInScreen(rememberNavController())
+        SignInScreen(rememberNavController(),   viewModel = hiltViewModel())
     }
 }

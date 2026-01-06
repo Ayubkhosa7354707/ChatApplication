@@ -173,7 +173,10 @@ class ChatScreenRepositoryImpl @Inject constructor(
                                                 messageTitle,
                                                 body = messageContent
                                             ),
-                                            data = Data(reciverID = reciver_UUID, userUUID),
+                                            data = Data(
+                                                reciverID = reciver_UUID,
+                                                senderID =  userUUID
+                                            ),
                                             date = System.currentTimeMillis()
                                         )
                                         PrintLogs.printInfo(" chatMessage : " + chatMessage.toString())

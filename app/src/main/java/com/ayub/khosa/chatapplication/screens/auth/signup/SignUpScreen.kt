@@ -1,6 +1,7 @@
 package com.ayub.khosa.chatapplication.screens.auth.signup
 
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,20 +37,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.ayub.khosa.chatapplication.R
 import com.ayub.khosa.chatapplication.screens.auth.AuthViewModel
+import com.ayub.khosa.chatapplication.screens.auth.signin.SignInScreen
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.screens.navigation.Screens
+import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
 import com.ayub.khosa.chatapplication.utils.Utils
 import com.ayub.khosa.chatapplication.utils.showToast
 
 @Composable
-fun SignUpScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController , viewModel: AuthViewModel = hiltViewModel()) {
 
-    val viewModel: AuthViewModel = hiltViewModel()
+
     val context = LocalContext.current
     if (!Utils.isNetworkAvailable(context)) {
         showToast(context, "Network is not available")
@@ -80,8 +85,8 @@ fun SignUpScreen(navController: NavController) {
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.LightGray)
+                    .size(150.dp)
+                    .background(Color.Transparent)
             )
 
 
@@ -148,5 +153,13 @@ fun SignUpScreen(navController: NavController) {
                 Text(text = "Already have an account? Sign In")
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignUpScreenPreview() {
+    ChatApplicationTheme {
+        SignUpScreen(rememberNavController())
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
@@ -27,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ayub.khosa.chatapplication.domain.model.UserStatus
 import com.ayub.khosa.chatapplication.fcmservice.component.FirebaseMessagingNotificationPermissionDialog
+import com.ayub.khosa.chatapplication.screens.auth.AuthViewModel
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.screens.navigation.Screens
 import com.ayub.khosa.chatapplication.utils.Utils
@@ -42,7 +44,7 @@ import com.google.firebase.messaging.messaging
 @OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController ,   viewModel: HomeViewModel = hiltViewModel()) {
 
 
     val showNotificationDialog = remember { mutableStateOf(false) }
@@ -64,7 +66,6 @@ fun HomeScreen(navController: NavHostController) {
         } else showNotificationDialog.value = true
     }
 
-    val viewModel: HomeViewModel = hiltViewModel()
 
     //Check User Authenticated
     val isUserSignOutInFirebase = viewModel.isUserSignOutInFirebase.value
@@ -106,8 +107,7 @@ fun HomeScreen(navController: NavHostController) {
                     viewModel.setUserStatusToFirebase(UserStatus.OFFLINE)
 
                 },
-                shape = RectangleShape,
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = "Sign Out")
             }
