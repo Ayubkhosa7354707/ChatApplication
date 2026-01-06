@@ -23,20 +23,24 @@ class UserListViewModel @Inject constructor(
 
     var chatRoomId = mutableStateOf("")
         private set
+    var loadFriendList = mutableStateOf<List<User>>(listOf())
+        private set
+
 
     init {
         PrintLogs.printInfo("UserListViewModel ")
         chatRoomId.value = ""
+        serch_user = mutableStateOf(User())
+        loadFriendList= mutableStateOf<List<User>>(listOf())
         loadFriendList()
     }
 
 
-    var loadFriendList = mutableStateOf<List<User>>(listOf())
-        private set
 
     fun loadFriendList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                loadFriendList= mutableStateOf<List<User>>(listOf())
                 userListScreenUseCases.loadFriendListFromFirebase().collect { response ->
                     when (response) {
                         is Response.Error -> {

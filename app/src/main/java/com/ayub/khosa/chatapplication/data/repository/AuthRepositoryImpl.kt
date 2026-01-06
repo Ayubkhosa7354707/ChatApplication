@@ -121,9 +121,10 @@ class AuthRepositoryImpl @Inject constructor(
                     val userUUID = firebaseAuth.currentUser?.uid.toString()
                     val displayName = firebaseAuth.currentUser?.displayName.toString()
                     val email = firebaseAuth.currentUser?.email.toString()
+                    val image = ""+firebaseAuth.currentUser?.photoUrl.toString()
                     val fcmtoken = fireMessage.token.await()
 
-                    val user = User(userUUID, email, displayName, fcmtoken)
+                    val user = User(userUUID, email, displayName, fcmtoken ,image)
                     var databaseReference =
                         firebaseDatabase.getReference("Profiles").child(userUUID).child("profile")
                     databaseReference.setValue(user).await()

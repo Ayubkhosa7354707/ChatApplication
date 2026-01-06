@@ -1,35 +1,53 @@
 package com.ayub.khosa.chatapplication.screens.userlist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.ayub.khosa.chatapplication.R
 import com.ayub.khosa.chatapplication.domain.model.User
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.screens.navigation.Screens
 import com.ayub.khosa.chatapplication.utils.Utils
 import com.ayub.khosa.chatapplication.utils.showToast
+import coil.compose.SubcomposeAsyncImage
+import kotlin.random.Random
 
 @Composable
 fun UserlistScreen(navController: NavHostController) {
@@ -77,8 +95,8 @@ fun UserlistScreen(navController: NavHostController) {
                     .background(Color.LightGray),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(loadFriendList.value) { item ->
-                    MyUser(item, onClick = { item1 ->
+                items(loadFriendList.value) { user ->
+                    MyUser(user, onClick = { item1 ->
                         registerUUID = item1.profileUUID
                         reciver_fcmtoken = item1.fcmToken
                         viewModel.checkChatRoomExistedFromFirebase(registerUUID)
@@ -98,21 +116,86 @@ fun MyUser(user: User, onClick: (User) -> Unit) {
             .clickable { onClick(user) }
             .padding(vertical = 4.dp)
     ) {
-        Text(
-            text = "" + user.userName,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(5.dp),
-            color = Color.Red
-        )
 
-        Text(
-            text = "" + user.userEmail,
-            fontSize = 15.sp,
-            modifier = Modifier.padding(5.dp),
-            color = Color.Blue
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(), // The row takes up the full width
+            horizontalArrangement =  Arrangement.Center, // Distributes space evenly
+            verticalAlignment = Alignment.CenterVertically // Vertically centers children
+        ) {
+            NetworkImageWithStateHandling(user.image)
+
+          Column(
+              modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp)) {
+              Text(
+                  text = "" + user.userName,
+                  fontSize = 16.sp,
+                  modifier = Modifier.padding(vertical = 1.dp),
+                  color = Color.Red
+              )
+
+              Text(
+                  text = "" + user.userEmail,
+                  fontSize = 15.sp,
+                  modifier = Modifier.padding(vertical = 1.dp),
+                  color = Color.Blue
+              )
+          }
+        }
+
+
+
 
     }
 
 
 }
+@Composable
+fun MyImageLoader(imageUrl: String) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(true) // Optional: adds a crossfade animation
+            .build(),
+        contentDescription = "Translated description of what the image contains", // For accessibility
+        modifier = Modifier.size(50.dp)
+            .clip(CircleShape),
+        contentScale = ContentScale.Crop // Optional: adjust scaling
+    )
+
+}
+
+
+@Composable
+fun NetworkImageWithStateHandling(imageUrl: String) {
+    val ringcolor = remember { randromcolor()}
+
+    SubcomposeAsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(true) // Optional: add a fade-in animation
+            .build(),
+        contentDescription = "Image with state handling",
+        loading = {
+            // Display a loading indicator while the image loads
+            Box(contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        },
+        error = {
+            // Display an error drawable if loading fails
+            Image(
+                painter = painterResource(R.drawable.logo), // Make sure you have an error drawable
+                contentDescription = "Error loading image"
+            )
+        },
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.border(2.dp, ringcolor, CircleShape).padding(4.dp)
+            .clip(CircleShape).size(50.dp),
+    )
+}
+
+fun randromcolor():Color=Color(
+    red = Random.nextInt(0,255),
+    green = Random.nextInt(0,255),
+    blue = Random.nextInt(0,255),
+)

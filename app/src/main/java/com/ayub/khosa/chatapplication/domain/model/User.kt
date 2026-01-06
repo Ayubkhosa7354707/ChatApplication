@@ -5,4 +5,5 @@ data class User(
     var userEmail: String = "",
     var userName: String = "",
     var fcmToken: String = "temp token",
+    val image:String="",
 )
