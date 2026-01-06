@@ -31,6 +31,7 @@ class ChatViewModel @Inject constructor(
 
     init {
         PrintLogs.printInfo("ChatViewModel init")
+        loadchatmessageList =        mutableStateOf<List<ChatMessage>>(listOf())
     }
 
     fun insertMessageToFirebase(

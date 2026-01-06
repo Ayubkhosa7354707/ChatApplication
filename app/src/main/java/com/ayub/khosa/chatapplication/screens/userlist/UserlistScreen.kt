@@ -1,5 +1,6 @@
 package com.ayub.khosa.chatapplication.screens.userlist
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -33,10 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -47,12 +51,15 @@ import com.ayub.khosa.chatapplication.screens.navigation.Screens
 import com.ayub.khosa.chatapplication.utils.Utils
 import com.ayub.khosa.chatapplication.utils.showToast
 import coil.compose.SubcomposeAsyncImage
+import com.ayub.khosa.chatapplication.screens.auth.AuthViewModel
+import com.ayub.khosa.chatapplication.screens.auth.signin.SignInScreen
+import com.ayub.khosa.chatapplication.ui.theme.ChatApplicationTheme
 import kotlin.random.Random
 
 @Composable
-fun UserlistScreen(navController: NavHostController) {
+fun UserlistScreen(navController: NavHostController , viewModel: UserListViewModel = hiltViewModel()) {
 
-    val viewModel: UserListViewModel = hiltViewModel()
+
     val context = LocalContext.current
     if (!Utils.isNetworkAvailable(context)) {
         showToast(context, "Network is not available")
@@ -114,18 +121,22 @@ fun MyUser(user: User, onClick: (User) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .clickable { onClick(user) }
-            .padding(vertical = 4.dp)
+            .padding(vertical = 2.dp),
+
     ) {
 
         Row(
-            modifier = Modifier.fillMaxWidth(), // The row takes up the full width
-            horizontalArrangement =  Arrangement.Center, // Distributes space evenly
-            verticalAlignment = Alignment.CenterVertically // Vertically centers children
+            modifier = Modifier.fillMaxWidth().padding( 2.dp), // The row takes up the full width
+//            horizontalArrangement =  Arrangement.Center, // Distributes space evenly
+//            verticalAlignment = Alignment.CenterVertically // Vertically centers children
         ) {
             NetworkImageWithStateHandling(user.image)
 
           Column(
-              modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp)) {
+              modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+//              horizontalAlignment = Alignment.CenterHorizontally, // Distributes space evenly
+//              verticalArrangement = Arrangement.Center ,  // Vertically centers children
+                        ) {
               Text(
                   text = "" + user.userName,
                   fontSize = 16.sp,
@@ -147,20 +158,6 @@ fun MyUser(user: User, onClick: (User) -> Unit) {
 
     }
 
-
-}
-@Composable
-fun MyImageLoader(imageUrl: String) {
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .crossfade(true) // Optional: adds a crossfade animation
-            .build(),
-        contentDescription = "Translated description of what the image contains", // For accessibility
-        modifier = Modifier.size(50.dp)
-            .clip(CircleShape),
-        contentScale = ContentScale.Crop // Optional: adjust scaling
-    )
 
 }
 
@@ -199,3 +196,16 @@ fun randromcolor():Color=Color(
     green = Random.nextInt(0,255),
     blue = Random.nextInt(0,255),
 )
+
+
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview(showBackground = true)
+@Composable
+fun MyUserPreview() {
+    ChatApplicationTheme {
+        MyUser(
+            user = User("id","email","name","token"),
+            onClick = {}
+        )
+    }
+}

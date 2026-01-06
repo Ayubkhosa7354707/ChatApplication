@@ -15,10 +15,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -39,6 +44,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ayub.khosa.chatapplication.domain.model.ChatMessage
+import com.ayub.khosa.chatapplication.domain.model.Data
+import com.ayub.khosa.chatapplication.domain.model.Notification
+import com.ayub.khosa.chatapplication.screens.auth.AuthViewModel
 import com.ayub.khosa.chatapplication.screens.common.TitleText
 import com.ayub.khosa.chatapplication.screens.navigation.Screens
 import com.ayub.khosa.chatapplication.utils.Utils
@@ -52,12 +60,10 @@ fun ChatScreen(
     chatRoomId: String,
     reciver_UUID: String,
     reciver_fcmtoken: String,
-    navController: NavHostController
+    navController: NavHostController, viewModel: ChatViewModel = hiltViewModel()
 ) {
 
 
-
-    val viewModel: ChatViewModel = hiltViewModel()
     val loadchatmessageList: MutableState<List<ChatMessage>> = viewModel.loadchatmessageList
     if (loadchatmessageList.value.isEmpty()) {
         viewModel.loadAllchatmessages(chatRoomId)
@@ -130,39 +136,69 @@ fun ChatScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(5.dp),
+                        .padding(0.dp)
+                        .background(Color.LightGray),
                     horizontalArrangement = Arrangement.SpaceBetween, // Distributes space evenly between children
                     verticalAlignment = Alignment.CenterVertically // Aligns children vertically in the center
                 ) {
                     var messageBody by remember { mutableStateOf("") }
                     // TextField for user input
-                    TextField(
-                        value = messageBody,
-                        onValueChange = { messageBody = it },
-                        label = { Text("Enter your Message ") },
-                        modifier = Modifier.weight(1f),
-                        singleLine = true,
-                    )
-                    Spacer(modifier = Modifier.size(5.dp))
-                    Button(
-                        onClick = {
-                            val randomInttitle = Random.nextInt(100)
-                            val randomIntbody = Random.nextInt(100)
 
-                            viewModel.insertMessageToFirebase(
-                                chatRoomId.toString(),
-                                "Message Title " + randomInttitle,
-                                messageBody + " " + randomIntbody,
-                                reciver_UUID.toString(),
-                                reciver_fcmtoken.toString()
-                            )
-                            messageBody=""
-
-                        },
+                    OutlinedTextField(
+                        value = messageBody, // 2. The current text value
+                        onValueChange = { messageBody = it }, // 3. Callback to update the state
+                        label = { Text("Enter your Message") }, // 4. Optional: A floating label
+                        singleLine = true ,// 5. Optional: Constrains to a single line
+                        modifier = Modifier.weight(1f).padding(start = 10.dp),
                         shape = RectangleShape,
-                        modifier = Modifier.wrapContentSize(),
+                    )
+                    Spacer(modifier = Modifier.size(5.dp).padding(vertical = 2.dp))
+//                    Button(
+//                        onClick = {
+//                            val randomInttitle = Random.nextInt(100)
+//                            val randomIntbody = Random.nextInt(100)
+//
+//                            viewModel.insertMessageToFirebase(
+//                                chatRoomId.toString(),
+//                                "Message Title " + randomInttitle,
+//                                messageBody + " " + randomIntbody,
+//                                reciver_UUID.toString(),
+//                                reciver_fcmtoken.toString()
+//                            )
+//                            messageBody=""
+//
+//                        },
+//                        shape = RectangleShape,
+//                        modifier = Modifier.wrapContentSize().padding(end = 10.dp)
+//                        ,
+//                    ) {
+//                        Text(text = "Send")
+//                    }
+
+
+                    IconButton(
+                        onClick = {
+                            if (messageBody.isNotBlank()) {
+                                val randomInttitle = Random.nextInt(100)
+                                val randomIntbody = Random.nextInt(100)
+
+                                viewModel.insertMessageToFirebase(
+                                    chatRoomId.toString(),
+                                    "Message Title " + randomInttitle,
+                                    messageBody + " " + randomIntbody,
+                                    reciver_UUID.toString(),
+                                    reciver_fcmtoken.toString()
+                                )
+                                messageBody=""
+                            }
+                        },
+                        enabled = messageBody.isNotBlank(), // Button is only enabled when there is text
+                        modifier = Modifier.wrapContentSize().padding(end = 10.dp)
                     ) {
-                        Text(text = "Send")
+                        Icon(
+                            Icons.Default.Send,
+                            contentDescription = "Send Message"
+                        )
                     }
 
             }
@@ -179,8 +215,8 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
                 .fillMaxSize()
                 .padding(start = 0.dp, top = 2.dp, end = 60.dp, bottom = 2.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.DarkGray, // Set the background color
-                contentColor = Color.White // Set the color for content (text/icons) inside the card
+                containerColor = Color.White, // Set the background color
+                contentColor = Color.Black // Set the color for content (text/icons) inside the card
             )
         ) {
 //            Text(text = "Reciver", fontSize = 15.sp, color = Color.Red)
@@ -188,13 +224,13 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
                 text = "" + chatmessage.notification.title,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(2.dp),
-                color = Color.White
+                color = Color.Black
             )
             Text(
                 text = "" + chatmessage.notification.body,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(2.dp),
-                color = Color.White
+                color = Color.Black
             )
 
         }
@@ -204,8 +240,8 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
                 .fillMaxSize()
                 .padding(start = 60.dp, top = 2.dp, end = 0.dp, bottom = 2.dp),
                 colors = CardDefaults.cardColors(
-                containerColor = Color.Cyan, // Set the background color
-                contentColor = Color.White // Set the color for content (text/icons) inside the card
+                containerColor = Color.White, // Set the background color
+                contentColor = Color.Black // Set the color for content (text/icons) inside the card
             )
         ) {
 
@@ -216,13 +252,13 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
                 text = "" + chatmessage.notification.title,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(2.dp),
-                color = Color.Blue
+                color = Color.Black
             )
             Text(
                 text = "" + chatmessage.notification.body,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(2.dp),
-                color = Color.Blue
+                color = Color.Black
             )
         }
     }
@@ -234,18 +270,18 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
 @Composable
 fun MyChatMessagePreview() {
     MyChatMessage(
-        chatmessage = ChatMessage(),
+        chatmessage = ChatMessage("uuid", Notification("title", "body"), Data("uuid", "uuid",), 0),
         registerUUID = ""
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ChatScreenPreview() {
-    ChatScreen(
-        chatRoomId = "1",
-        reciver_UUID = "2",
-        reciver_fcmtoken = "3",
-        navController = NavHostController(LocalContext.current)
-    )
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun ChatScreenPreview() {
+//    ChatScreen(
+//        chatRoomId = "1",
+//        reciver_UUID = "2",
+//        reciver_fcmtoken = "3",
+//        navController = NavHostController(LocalContext.current)
+//    )
+//}
