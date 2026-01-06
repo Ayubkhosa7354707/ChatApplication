@@ -77,17 +77,14 @@ class AuthViewModel @Inject constructor(
                     is Response.Loading -> {
                         toastMessage.value = ""
                     }
-
                     is Response.Success -> {
                         PrintLogs.printInfo("signIn success " + response.data)
                         isUserSignUpState.value = response.data
                         if (response.data) {
-
                             setUserStatusToFirebase(UserStatus.ONLINE)
                         }
                         toastMessage.value = "Sign up Successful"
                     }
-
                     is Response.Error -> {
                         toastMessage.value = "Sign up Failed"
                     }

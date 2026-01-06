@@ -177,22 +177,22 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
         Card(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 4.dp),
+                .padding(start = 0.dp, top = 2.dp, end = 60.dp, bottom = 2.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.DarkGray, // Set the background color
                 contentColor = Color.White // Set the color for content (text/icons) inside the card
             )
         ) {
-            Text(text = "Reciver", color = Color.Red)
+//            Text(text = "Reciver", fontSize = 15.sp, color = Color.Red)
             Text(
                 text = "" + chatmessage.notification.title,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(5.dp),
+                fontSize = 16.sp,
+                modifier = Modifier.padding(2.dp),
                 color = Color.White
             )
             Text(
                 text = "" + chatmessage.notification.body,
-                fontSize = 18.sp,
+                fontSize = 15.sp,
                 modifier = Modifier.padding(2.dp),
                 color = Color.White
             )
@@ -202,25 +202,25 @@ fun MyChatMessage(chatmessage: ChatMessage, registerUUID: String) {
         Card(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 4.dp),
-            colors = CardDefaults.cardColors(
+                .padding(start = 60.dp, top = 2.dp, end = 0.dp, bottom = 2.dp),
+                colors = CardDefaults.cardColors(
                 containerColor = Color.Cyan, // Set the background color
                 contentColor = Color.White // Set the color for content (text/icons) inside the card
             )
         ) {
 
-            Text(text = "Sender", color = Color.Magenta)
+//            Text(text = "Sender", fontSize = 15.sp, color = Color.Magenta)
 
 
             Text(
                 text = "" + chatmessage.notification.title,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(5.dp),
+                fontSize = 16.sp,
+                modifier = Modifier.padding(2.dp),
                 color = Color.Blue
             )
             Text(
                 text = "" + chatmessage.notification.body,
-                fontSize = 18.sp,
+                fontSize = 15.sp,
                 modifier = Modifier.padding(2.dp),
                 color = Color.Blue
             )
